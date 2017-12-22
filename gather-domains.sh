@@ -16,11 +16,11 @@ fi
 ###
 # Grab any extra Federal hostnames that CYHY knows about
 ###
-scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
+scripts/fed_hostnames.py --output-file=/tmp/cyhy_fed_hostnames.csv
 
 ###
-# Gather hostnames using GSA/data, analytics.usa.gov, censys, EOT, and
-# any local additions.
+# Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
+# Rapid7's Reverse DNS v2, CyHy, and any local additions.
 #
 # We need --include-parents here to get the second-level domains.
 #
@@ -28,16 +28,17 @@ scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 # We are instead pulling an archived version of the data from GSA/data
 # on GitHub.
 ###
-$HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,eot_2012,eot_2016,include,cyhy \
+$HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,include \
                              --suffix=.gov --ignore-www --include-parents \
                              --parents=https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
                              --current_federal=https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
                              --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
                              --censys_snapshot=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/censys-federal-snapshot.csv \
+                             --rapid=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/rdns-federal-snapshot.csv \
                              --eot_2012=$INCLUDE_DIR/eot-2012.csv \
                              --eot_2016=$INCLUDE_DIR/eot-2016.csv \
-                             --include=$INCLUDE_DIR/include.txt \
-                             --cyhy=$OUTPUT_DIR/cyhy_fed_hostnames.csv
+                             --cyhy=/tmp/cyhy_fed_hostnames.csv \
+                             --include=$INCLUDE_DIR/include.txt
 cp results/gathered.csv gathered.csv
 cp results/gathered.csv $OUTPUT_DIR/gathered.csv
 
