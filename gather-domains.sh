@@ -14,6 +14,11 @@ then
 fi
 
 ###
+# Grab any extra Federal hostnames that CYHY knows about
+###
+scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
+
+###
 # Gather hostnames using GSA/data, analytics.usa.gov, censys, EOT, and
 # any local additions.
 #
@@ -32,7 +37,7 @@ $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,e
                              --eot_2012=$INCLUDE_DIR/eot-2012.csv \
                              --eot_2016=$INCLUDE_DIR/eot-2016.csv \
                              --include=$INCLUDE_DIR/include.txt \
-                             --cyhy=$INCLUDE_DIR/fed_cyhy_web_hostnames-all.txt
+                             --cyhy=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 cp results/gathered.csv gathered.csv
 cp results/gathered.csv $OUTPUT_DIR/gathered.csv
 

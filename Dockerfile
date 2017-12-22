@@ -28,6 +28,9 @@ RUN git clone https://github.com/18F/domain-scan /home/gatherer/domain-scan/ \
     && pip install -r /home/gatherer/domain-scan/requirements.txt \
     && pip install urllib3==1.21.1
 
+# Install some dependencies for scripts/fed_hostnames.py
+RUN pip install docopt pymongo pyyaml
+
 # Remove build dependencies
 RUN apk del git \
         shadow \
