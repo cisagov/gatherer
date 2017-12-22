@@ -10,3 +10,15 @@ version where extra columns and characters that could break parsing
 are removed is saved to `/home/gatherer/gathered_domains/scanme.csv`.
 As a result, you will likely want to mount a Docker volume to
 `/home/gatherer/gathered_domains`.
+
+## Setup ##
+Before attempting to run this project, you must create
+`secrets/database_creds.yml` with the following format:
+
+```
+version: '1'
+
+database:
+  name: cyhy
+  uri: mongodb://<DB_USERNAME>:<DB_PASSWORD>@<DB_HOST>:<DB_PORT>/cyhy
+```
