@@ -4,7 +4,7 @@
 ###
 
 HOME_DIR=/home/gatherer
-OUTPUT_DIR=$HOME_DIR/gathered_domains
+OUTPUT_DIR=$HOME_DIR/shared
 INCLUDE_DIR=$HOME_DIR/include
 
 # Create the output directory, if necessary
