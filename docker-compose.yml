@@ -9,7 +9,7 @@ services:
     build: .
     image: 'dhub.ncats.dhs.gov:5001/gatherer:latest'
     volumes:
-      - /tmp:/home/gatherer/gathered_domains
+      - /tmp:/home/gatherer/shared
     secrets:
       - source: database_creds
         target: database_creds.yml
