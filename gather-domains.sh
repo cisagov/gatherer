@@ -50,3 +50,6 @@ sed -i '/^ *$/d;/@/d;s/ //g;s/\"//g;s/'\''//g' scanme.csv
 
 # Move the scanme to the output directory
 mv scanme.csv $OUTPUT_DIR/scanme.csv
+
+# Let redis know we're done
+redis-cli -h orchestrator_redis_1 set gathering_complete true

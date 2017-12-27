@@ -5,6 +5,8 @@ MAINTAINER Shane Frasier <jeremy.frasier@beta.dhs.gov>
 # shadow so we have adduser and addgroup.  These are build
 # dependencies that will be removed at the end.
 #
+# Install redis to we can use redis-cli to communicate with redis.
+#
 # Also install build-base, libffi, libffi-dev, openssl, and
 # openssl-dev since they are needed to build some of the dependencies
 # of domain-scan.  With the exception of libffi and openssl, these are
@@ -12,6 +14,7 @@ MAINTAINER Shane Frasier <jeremy.frasier@beta.dhs.gov>
 RUN apk update && \
     apk add git \
         shadow \
+        redis \
         build-base \
         libffi libffi-dev \
         openssl openssl-dev
