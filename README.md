@@ -1,8 +1,8 @@
-# NCATS Domain Gatherer #
+# NCATS Domain Gatherer :notebook: :file_folder: #
 
 This is a Docker image for gathering domains.  It is most commonly run
-as a prerequisite for the `scanner` Docker image, although it can be
-run independently via `docker-compose`.
+via [orchestrator](https://github.com/dhs-ncats/orchestrator),
+although it can be run independently via `docker-compose`.
 
 The CSV of gathered domains is saved to
 `/home/gatherer/shared/gathered.csv`, and a processed version where
