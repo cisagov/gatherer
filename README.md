@@ -1,23 +1,11 @@
 # NCATS Domain Gatherer :notebook: :file_folder: #
 
-This is a Docker image for gathering domains.  It is most commonly run
-via [orchestrator](https://github.com/dhs-ncats/orchestrator),
-although it can be run independently via `docker-compose`.
+This is a Docker container that uses
+[domain-scan](https://github.com/18F/domain-scan) to gather domains as
+a precursor to scanning by
+[pshtt](https://github.com/dhs-ncats/pshtt),
+[trustymail](https://github.com/dhs-ncats/trustymail), and
+[sslyze](https://github.com/nabla-c0d3/sslyze).
 
-The CSV of gathered domains is saved to
-`/home/gatherer/shared/gathered.csv`, and a processed version where
-extra columns and characters that could break parsing are removed is
-saved to `/home/gatherer/shared/scanme.csv`.  As a result, you will
-likely want to mount a Docker volume to `/home/gatherer/shared`.
-
-## Setup ##
-Before attempting to run this project, you must create
-`secrets/database_creds.yml` with the following format:
-
-```
-version: '1'
-
-database:
-  name: cyhy
-  uri: mongodb://<DB_USERNAME>:<DB_PASSWORD>@<DB_HOST>:<DB_PORT>/cyhy
-```
+This Docker container is intended to be run via
+[orchestrator](https://github.com/dhs-ncats/orchestrator).
