@@ -237,6 +237,7 @@ youtube.ushmm.org
 _sip._tls.cpsc.gov
 _sipfederationtls._tcp.cpsc.gov
 access.cpsc.gov
+access2.cpsc.gov
 alertus.cpsc.gov
 hormel.cpsc.gov
 kodos.cpsc.gov
