@@ -11,8 +11,7 @@ MAINTAINER Shane Frasier <jeremy.frasier@beta.dhs.gov>
 # openssl-dev since they are needed to build some of the dependencies
 # of domain-scan.  With the exception of libffi and openssl, these are
 # all build dependencies that can be removed at the end.
-RUN apk update && \
-    apk add git \
+RUN apk --no-cache add git \
         shadow \
         redis \
         build-base \
@@ -35,7 +34,7 @@ RUN git clone https://github.com/18F/domain-scan /home/gatherer/domain-scan/ \
 RUN pip install docopt pymongo pyyaml
 
 # Remove build dependencies
-RUN apk del git \
+RUN apk --no-cache del git \
         shadow \
         build-base \
         libffi-dev \
