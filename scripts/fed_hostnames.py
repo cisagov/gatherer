@@ -79,6 +79,22 @@ def database_from_config_file(config_filename):
     return db_connection[db_name]
 
 def get_all_descendants(database, owner):
+    """Return all (non-retired) descendents of the given Cyber Hygiene
+    parent
+
+    Parameters
+    ----------
+    db : MongoDatabase
+        The Mongo database from which Cyber Hygiene customer data can
+        be retrieved.
+
+    parent : str
+        The Cyber Hygiene parent for which all descendents are desired.
+
+    Returns
+    -------
+    list of str: The descendents of the Cyber Hygiene parent.
+    """
     current_request = database.requests.find_one({'_id': owner})
     if not current_request:
         raise ValueError(owner + ' has no request document')
