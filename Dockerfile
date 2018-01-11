@@ -49,6 +49,6 @@ RUN chown -R gatherer:gatherer ${GATHERER_HOME}
 ###
 # Prepare to Run
 ###
-USER gatherer:gatherer
+# USER gatherer:gatherer
 WORKDIR $GATHERER_HOME
 ENTRYPOINT ["./gather-domains.sh"]
