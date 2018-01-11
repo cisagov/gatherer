@@ -4,7 +4,7 @@
 ###
 
 HOME_DIR=/home/gatherer
-OUTPUT_DIR=$HOME_DIR/shared
+OUTPUT_DIR=$HOME_DIR/shared/artifacts
 INCLUDE_DIR=$HOME_DIR/include
 
 # Create the output directory, if necessary
