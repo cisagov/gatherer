@@ -262,16 +262,7 @@ oig.lsc.gov
 www.oig.lsc.gov
 vpn.oig.lsc.gov
 sa.stateoig.gov
-crs.fhfb.gov
-emergency.fhfb.gov
-fhfb.gov
-list.fhfb.gov
 harp.gov
-fw1.ofheo.gov
-lists.ofheo.gov
-netmail1.ofheo.gov
-netmail.ofheo.gov
-ofheo.gov
 connect.fhfa.gov
 csp.fhfa.gov
 edelivery.fhfa.gov
