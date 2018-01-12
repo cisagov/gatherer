@@ -29,7 +29,10 @@ wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-fe
 # that these domains are no longer registered, but they are still in
 # current-federal.  Once issue #103 in GSA/data has been resolved,
 # this sed command can be removed.
-sed -i '/^FHFB\.GOV,.*$/d;/^OFHEO\.GOV,.*$/d' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '/^FHFB\.GOV,/d;/^OFHEO\.GOV,/d' $OUTPUT_DIR/current-federal_modified.csv
+# Remove all domains that belong to US Courts, since they are part of
+# the judicial branch and have asked us to stop scanning them.
+sed -i '/[^,]*,[^,]*,U.S Courts,/d;' $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
