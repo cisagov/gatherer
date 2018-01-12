@@ -11,12 +11,16 @@ MAINTAINER Shane Frasier <jeremy.frasier@beta.dhs.gov>
 # openssl-dev since they are needed to build some of the dependencies
 # of domain-scan.  With the exception of libffi and openssl, these are
 # all build dependencies that can be removed at the end.
+#
+# Finally, we need wget to pull the latest list of Federal domains
+# from GitHub.
 RUN apk --no-cache add git \
         shadow \
         redis \
         build-base \
         libffi libffi-dev \
-        openssl openssl-dev
+        openssl openssl-dev \
+        wget
 
 # Create unprivileged user
 ENV GATHERER_HOME=/home/gatherer
