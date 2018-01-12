@@ -19,6 +19,19 @@ fi
 scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 
 ###
+# We need a copy of current-federal since we want to remove some
+# things from it and use the result to define our parent domains when
+# we run domain-scan.  We need the raw file, and domain-scan/gather
+# modifies the fields in the CSV, so we'll use wget here.
+wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
+     -O $OUTPUT_DIR/current-federal_modified.csv
+# Now remove the domains ofheo.gov and fhfb.gov.  FHFA has advised us
+# that these domains are no longer registered, but they are still in
+# current-federal.  Once issue #103 in GSA/data has been resolved,
+# this sed command can be removed.
+sed -i '/^FHFB\.GOV,.*$/d;/^OFHEO\.GOV,.*$/d' $OUTPUT_DIR/current-federal_modified.csv
+
+###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
 # Rapid7's Reverse DNS v2, CyHy, and any local additions.
 #
@@ -30,7 +43,7 @@ scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 ###
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,include \
                              --suffix=.gov --ignore-www --include-parents \
-                             --parents=https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
+                             --parents=$OUTPUT_DIR/current-federal_modified.csv \
                              --current_federal=https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
                              --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
                              --censys_snapshot=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/censys-federal-snapshot.csv \
