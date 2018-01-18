@@ -33,6 +33,9 @@ sed -i '/^FHFB\.GOV,/d;/^OFHEO\.GOV,/d' $OUTPUT_DIR/current-federal_modified.csv
 # Remove all domains that belong to US Courts, since they are part of
 # the judicial branch and have asked us to stop scanning them.
 sed -i '/[^,]*,[^,]*,U.S Courts,/d;' $OUTPUT_DIR/current-federal_modified.csv
+# HHS has asked that these two domains be removed, although both
+# appear to still be registered.  See OPS-2131.
+sed -i '/^BIOSECURITYBOARD\.GOV,/d;/^MEDICALRESERVECORPS\.GOV,/d' $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
