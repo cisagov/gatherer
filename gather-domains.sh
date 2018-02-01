@@ -27,7 +27,13 @@ wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-fe
      -O $OUTPUT_DIR/current-federal_modified.csv
 # Remove all domains that belong to US Courts, since they are part of
 # the judicial branch and have asked us to stop scanning them.
-sed -i '/[^,]*,[^,]*,U.S Courts,/d;' $OUTPUT_DIR/current-federal_modified.csv
+#
+# Remove all domains that belong to the judicial branch
+sed -i '/[^,]*,[^,]*,U.S Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d;/[^,]*,[^,]*,The Judicial Branch (Courts),/d' $OUTPUT_DIR/current-federal_modified.csv
+# Remove all domains that belong to the legislative branch
+sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,The Legislative Branch (Congress),/d;/[^,]*,[^,]*,Government Printing Office,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U.S. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' $OUTPUT_DIR/current-federal_modified.csv
+# Remove all non-federal domains
+sed -i '/[^,]*,[^,]*,Non-Federal Agency,/d' $OUTPUT_DIR/current-federal_modified.csv
 # HHS has asked that these two domains be removed, although both
 # appear to still be registered.  See OPS-2131.
 sed -i '/^BIOSECURITYBOARD\.GOV,/d;/^MEDICALRESERVECORPS\.GOV,/d' $OUTPUT_DIR/current-federal_modified.csv
