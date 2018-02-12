@@ -27,10 +27,16 @@ wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-fe
      -O $OUTPUT_DIR/current-federal_modified.csv
 # Remove all domains that belong to US Courts, since they are part of
 # the judicial branch and have asked us to stop scanning them.
-sed -i '/[^,]*,[^,]*,U.S Courts,/d;' $OUTPUT_DIR/current-federal_modified.csv
+#
+# Note that "U.S Courts" with no period after the "S" is intended.
+# This is the spelling that current-federal uses.
+sed -i '/[^,]*,[^,]*,U\.S Courts,/d;' $OUTPUT_DIR/current-federal_modified.csv
 # HHS has asked that these two domains be removed, although both
 # appear to still be registered.  See OPS-2131.
 sed -i '/^BIOSECURITYBOARD\.GOV,/d;/^MEDICALRESERVECORPS\.GOV,/d' $OUTPUT_DIR/current-federal_modified.csv
+# We need to add the usmma.edu domain for DOT.  See OPS-2187 for
+# details.
+sed -i '$ a USMMA\.EDU,Federal Agency,Department of Transportation,Kings Point,NY' $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
@@ -41,11 +47,14 @@ sed -i '/^BIOSECURITYBOARD\.GOV,/d;/^MEDICALRESERVECORPS\.GOV,/d' $OUTPUT_DIR/cu
 # Censys is no longer free as of 12/1/2017, so we do not have access.
 # We are instead pulling an archived version of the data from GSA/data
 # on GitHub.
+#
+# Note that we have to include .edu in the --suffix argument because
+# of the USMMA.EDU domain added above.
 ###
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,include \
-                             --suffix=.gov --ignore-www --include-parents \
+                             --suffix=.gov,.edu --ignore-www --include-parents \
                              --parents=$OUTPUT_DIR/current-federal_modified.csv \
-                             --current_federal=https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
+                             --current_federal=$OUTPUT_DIR/current-federal_modified.csv \
                              --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
                              --censys_snapshot=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/censys-federal-snapshot.csv \
                              --rapid=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/rdns-federal-snapshot.csv \
