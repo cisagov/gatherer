@@ -23,19 +23,36 @@ scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 # things from it and use the result to define our parent domains when
 # we run domain-scan.  We need the raw file, and domain-scan/gather
 # modifies the fields in the CSV, so we'll use wget here.
+###
 wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
      -O $OUTPUT_DIR/current-federal_modified.csv
+###
 # Remove all domains that belong to US Courts, since they are part of
 # the judicial branch and have asked us to stop scanning them.
 #
+# Also remove all domains that belong to the judicial branch.
+#
 # Note that "U.S Courts" with no period after the "S" is intended.
 # This is the spelling that current-federal uses.
-sed -i '/[^,]*,[^,]*,U\.S Courts,/d;' $OUTPUT_DIR/current-federal_modified.csv
+###
+sed -i '/[^,]*,[^,]*,U\.S Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d;/[^,]*,[^,]*,The Judicial Branch (Courts),/d' $OUTPUT_DIR/current-federal_modified.csv
+###
+# Remove all domains that belong to the legislative branch
+###
+sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,The Legislative Branch (Congress),/d;/[^,]*,[^,]*,Government Printing Office,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U.S. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' $OUTPUT_DIR/current-federal_modified.csv
+###
+# Remove all non-federal domains
+###
+sed -i '/[^,]*,[^,]*,Non-Federal Agency,/d' $OUTPUT_DIR/current-federal_modified.csv
+###
 # HHS has asked that these two domains be removed, although both
 # appear to still be registered.  See OPS-2131.
+###
 sed -i '/^BIOSECURITYBOARD\.GOV,/d;/^MEDICALRESERVECORPS\.GOV,/d' $OUTPUT_DIR/current-federal_modified.csv
+###
 # We need to add the usmma.edu domain for DOT.  See OPS-2187 for
 # details.
+###
 sed -i '$ a USMMA\.EDU,Federal Agency,Department of Transportation,Kings Point,NY' $OUTPUT_DIR/current-federal_modified.csv
 
 ###
