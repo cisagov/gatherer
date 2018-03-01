@@ -1,4 +1,4 @@
-FROM python:3.6.3-alpine3.6
+FROM python:3.6.4-alpine3.7
 MAINTAINER Shane Frasier <jeremy.frasier@beta.dhs.gov>
 
 # Install git so we can checkout the domain-scan git repo.  Install
