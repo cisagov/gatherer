@@ -37,9 +37,16 @@ wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-fe
 ###
 sed -i '/[^,]*,[^,]*,U\.S Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d;/[^,]*,[^,]*,The Judicial Branch (Courts),/d' $OUTPUT_DIR/current-federal_modified.csv
 ###
-# Remove all domains that belong to the legislative branch
+# Remove all domains that belong to the legislative branch, with the
+# exception of the House of Representatives (HOR).  HOR specifically
+# asked to receive HTTPS and Trustworthy Email reports, as discussed
+# in CYHY-617 and OPS-2263.
+#
+# Furthermore, as mentioned in CYHY-617, a domain is associated with
+# HOR if and only if the domain is labeled "The Legislative Branch
+# (Congress)" in current-federal.
 ###
-sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,The Legislative Branch (Congress),/d;/[^,]*,[^,]*,Government Printing Office,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U.S. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Printing Office,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U.S. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' $OUTPUT_DIR/current-federal_modified.csv
 ###
 # Remove all non-federal domains
 ###
