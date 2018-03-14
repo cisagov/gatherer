@@ -61,6 +61,12 @@ sed -i '/^BIOSECURITYBOARD\.GOV,/d;/^MEDICALRESERVECORPS\.GOV,/d' $OUTPUT_DIR/cu
 # details.
 ###
 sed -i '$ a USMMA\.EDU,Federal Agency,Department of Transportation,Kings Point,NY' $OUTPUT_DIR/current-federal_modified.csv
+###
+# We need to add the aon.com and aonbenfield.com domains for Treasury.
+# See OPS-2311 for details.
+###
+sed -i '$ a AON\.COM,Federal Agency,Department of the Treasury,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a AONBENFIELD\.COM,Federal Agency,Department of the Treasury,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
@@ -72,11 +78,11 @@ sed -i '$ a USMMA\.EDU,Federal Agency,Department of Transportation,Kings Point,N
 # We are instead pulling an archived version of the data from GSA/data
 # on GitHub.
 #
-# Note that we have to include .edu in the --suffix argument because
-# of the USMMA.EDU domain added above.
+# Note that we have to include usmma.edu, aon.com, and aonbenfield.com
+# in the --suffix argument because of the domains added above.
 ###
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,other \
-                             --suffix=.gov,.edu --ignore-www --include-parents \
+                             --suffix=.gov,usmma.edu,aon.com,aonbenfield.com --ignore-www --include-parents \
                              --parents=$OUTPUT_DIR/current-federal_modified.csv \
                              --current_federal=$OUTPUT_DIR/current-federal_modified.csv \
                              --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
