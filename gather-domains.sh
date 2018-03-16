@@ -78,11 +78,11 @@ sed -i '$ a AONBENFIELD\.COM,Federal Agency,Department of the Treasury,Washingto
 # We are instead pulling an archived version of the data from GSA/data
 # on GitHub.
 #
-# Note that we have to include usmma.edu, aon.com, and aonbenfield.com
-# in the --suffix argument because of the domains added above.
+# Note that we have to include .edu and .com in the --suffix argument
+# because of the domains added above.
 ###
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,other \
-                             --suffix=.gov,usmma.edu,aon.com,aonbenfield.com --ignore-www --include-parents \
+                             --suffix=.gov,.edu,.com --ignore-www --include-parents \
                              --parents=$OUTPUT_DIR/current-federal_modified.csv \
                              --current_federal=$OUTPUT_DIR/current-federal_modified.csv \
                              --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
