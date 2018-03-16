@@ -47,6 +47,9 @@ RUN git clone https://github.com/18F/domain-scan /home/gatherer/domain-scan/ \
 # Install some dependencies for scripts/fed_hostnames.py
 RUN pip install --upgrade docopt pymongo pyyaml
 
+# Clean up aptitude cruft
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # Put this just before we change users because the copy (and every
 # step after it) will always be rerun by docker, but we need to be
 # root for the chown command.
