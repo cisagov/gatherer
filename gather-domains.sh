@@ -52,11 +52,6 @@ sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Printing Off
 ###
 sed -i '/[^,]*,[^,]*,Non-Federal Agency,/d' $OUTPUT_DIR/current-federal_modified.csv
 ###
-# HHS has asked that these two domains be removed, although both
-# appear to still be registered.  See OPS-2131.
-###
-sed -i '/^BIOSECURITYBOARD\.GOV,/d;/^MEDICALRESERVECORPS\.GOV,/d' $OUTPUT_DIR/current-federal_modified.csv
-###
 # We need to add the usmma.edu domain for DOT.  See OPS-2187 for
 # details.
 ###
