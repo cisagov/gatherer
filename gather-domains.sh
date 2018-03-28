@@ -35,7 +35,7 @@ wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-fe
 # Note that "U.S Courts" with no period after the "S" is intended.
 # This is the spelling that current-federal uses.
 ###
-sed -i '/[^,]*,[^,]*,U\.S Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d;/[^,]*,[^,]*,The Judicial Branch (Courts),/d' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d;/[^,]*,[^,]*,The Judicial Branch (Courts),/d' $OUTPUT_DIR/current-federal_modified.csv
 ###
 # Remove all domains that belong to the legislative branch, with the
 # exception of the House of Representatives (HOR).  HOR specifically
