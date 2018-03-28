@@ -30,12 +30,9 @@ wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-fe
 # Remove all domains that belong to US Courts, since they are part of
 # the judicial branch and have asked us to stop scanning them.
 #
-# Also remove all domains that belong to the judicial branch.
-#
-# Note that "U.S Courts" with no period after the "S" is intended.
-# This is the spelling that current-federal uses.
+# Also remove all other domains that belong to the judicial branch.
 ###
-sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d;/[^,]*,[^,]*,The Judicial Branch (Courts),/d' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d' $OUTPUT_DIR/current-federal_modified.csv
 ###
 # Remove all domains that belong to the legislative branch, with the
 # exception of the House of Representatives (HOR).  HOR specifically
@@ -46,11 +43,7 @@ sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d;/[^,]*,[
 # HOR if and only if the domain is labeled "The Legislative Branch
 # (Congress)" in current-federal.
 ###
-sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Printing Office,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U.S. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' $OUTPUT_DIR/current-federal_modified.csv
-###
-# Remove all non-federal domains
-###
-sed -i '/[^,]*,[^,]*,Non-Federal Agency,/d' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U.S. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' $OUTPUT_DIR/current-federal_modified.csv
 ###
 # We need to add the usmma.edu domain for DOT.  See OPS-2187 for
 # details.
