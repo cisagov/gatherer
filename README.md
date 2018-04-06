@@ -1,5 +1,7 @@
 # NCATS Domain Gatherer :notebook: :file_folder: #
 
+[![Build Status](https://travis-ci.org/dhs-ncats/gatherer.svg?branch=master)](https://travis-ci.org/dhs-ncats/gatherer)
+
 This is a Docker container that uses
 [domain-scan](https://github.com/18F/domain-scan) to gather domains as
 a precursor to scanning by
