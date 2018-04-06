@@ -1,0 +1,19 @@
+sudo: required
+
+services:
+  - docker
+
+env:
+  global:
+    - IMAGE_NAME=dhsncats/gatherer
+    - DOCKER_USER=jsf9k
+    - secure: "zIyHkDg9thZRegsFjQDTSqpuqkybIQSrQarUfsXJLJR1rAm7s1qeDT1I3AlNyY8x4RgY5PreFqRM3ebsFpHSUmXFS0ECiYVO6aJQ409Hx5wUhbEN1hpwocVJ8iC4tEf7/xv5Lu8LTUlD5/wwEhkcgs5p5OTFfEXu9iZGPQT7lZQMYlch855DvzGNr0TON/biPQ3QK70QtcyJyLsIErQbSkPw7SvhuPrY/HOW/CqbgkVkCqQQL9/M8FfwUzV/iIftAWFU2+vEN2leNmqI69CLEToyhljVK80uMoNJtC3NCeVVnaLhLtLObdASPt1+MIngKe/wxhciNXALAxLr87+MeeouYj/VrF34DZa3+qRcwby7nfTZIBFqpJ4ne+Nf63XXtbhNIkEL43kPILCu2nx1EHvlOCVYOJV4dKYxpAmF+/DERxJDQH/ZL0ltAb5j8nac1HdB/AnrKEhMvSZiOUT1lx1y2x4rQeThOYb9+Qaxejukxcuq0ykreJa7hxSiZ5o4hXlX24PAq3awqDSHk5GHBA6WaBQifuOoYIqypOm4JfvzfzXHYSmWSCZCG6NBKSX8iTIrHhQ8Anhc60zZwXudfhKzeUxa8HTh4jHtGI2dJxON1ajoxWnUovKuNPtfvl+yIjAN9cU4KazFnMu0jnJMxGubhWmAieHM5aeF4MlUQRw="
+
+script:
+  - bash travis_scripts/build_docker_image.sh
+
+deploy:
+  - provider: script
+    script: bash travis_scripts/deploy_to_docker_hub.sh
+    on:
+      tags: true

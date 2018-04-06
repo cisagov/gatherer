@@ -1,5 +1,8 @@
 .git
 .gitignore
-docker-compose.yml
+.travis.yml
 LICENSE.md
 README.md
+bump_version.sh
+tag.sh
+travis_scripts

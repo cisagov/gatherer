@@ -32,6 +32,13 @@ import pymongo.errors
 import yaml
 
 
+# The ports that are most commonly used by public-facing web servers
+WebServerPorts = {80, 280, 443, 591, 593, 832, 8080, 8888, 4443, 8443, 9443, 10443}
+
+# The ports that are most commonly used by mail servers
+MailServerPorts = {25, 110, 143, 465, 587, 993, 995, 2525}
+
+
 def database_from_config_file(config_filename):
     """Given the name of the YAML file containing the configuration
     information, return a corresponding MongoDB connection.
@@ -79,6 +86,22 @@ def database_from_config_file(config_filename):
     return db_connection[db_name]
 
 def get_all_descendants(database, owner):
+    """Return all (non-retired) descendents of the given Cyber Hygiene
+    parent
+
+    Parameters
+    ----------
+    db : MongoDatabase
+        The Mongo database from which Cyber Hygiene customer data can
+        be retrieved.
+
+    parent : str
+        The Cyber Hygiene parent for which all descendents are desired.
+
+    Returns
+    -------
+    list of str: The descendents of the Cyber Hygiene parent.
+    """
     current_request = database.requests.find_one({'_id': owner})
     if not current_request:
         raise ValueError(owner + ' has no request document')
@@ -121,15 +144,20 @@ def main():
     except pymongo.errors.InvalidName:
         logging.critical('The database in {} does not exist'.format(db_creds_file), exc_info=True)
         return 1
-    
+
+    # Get all Federal organizations
     fed_orgs = get_all_descendants(db, 'FEDERAL')
     logging.debug('Federal orgs are {}'.format(fed_orgs))
 
-    # Get all Federal hosts with a detected hostname (latest scan only)
-    fed_hosts_with_detected_hostnames = db.host_scans.find({'latest': True, 'owner': {'$in': fed_orgs}, 'hostname': {'$ne': None}}, {'_id': False, 'hostname': True, 'owner': True})
+    # Get all Federal hosts with open ports that indicate a possible web or
+    # email server (latest scan only)...
+    potential_web_or_email_server_ips = {i['ip_int'] for i in db.port_scans.find({'latest': True, 'owner': {'$in': fed_orgs}, 'port': {'$in': list(WebServerPorts | MailServerPorts)}}, {'_id': False, 'ip_int': True})}
+    # ...of these, get all Federal hosts with a detected hostname (latest scan
+    # only)
+    fed_hosts = db.host_scans.find({'latest': True, 'ip_int': {'$in': list(potential_web_or_email_server_ips)}, 'owner': {'$in': fed_orgs}, 'hostname': {'$ne': None}}, {'_id': False, 'hostname': True, 'owner': True})
 
     with open(args['--output-file'], 'w') as file:
-        for host in fed_hosts_with_detected_hostnames:
+        for host in fed_hosts:
             file.write('{},{}\n'.format(host['hostname'], host['owner']))
             logging.debug('Federal host {}'.format(host))
 

@@ -1,12 +1,26 @@
-# NCATS Domain Gatherer #
+# NCATS Domain Gatherer :notebook: :file_folder: #
 
-This is a Docker image for gathering domains.  It is most commonly run
-as a prerequisite for the `scanner` Docker image, although it can be
-run independently via `docker-compose`.
+[![Build Status](https://travis-ci.org/dhs-ncats/gatherer.svg?branch=master)](https://travis-ci.org/dhs-ncats/gatherer)
 
-The CSV of gathered domains is saved to
-`/home/gatherer/gathered_domains/gathered.csv`, and a processed
-version where extra columns and characters that could break parsing
-are removed is saved to `/home/gatherer/gathered_domains/scanme.csv`.
-As a result, you will likely want to mount a Docker volume to
-`/home/gatherer/gathered_domains`.
+This is a Docker container that uses
+[domain-scan](https://github.com/18F/domain-scan) to gather domains as
+a precursor to scanning by
+[pshtt](https://github.com/dhs-ncats/pshtt),
+[trustymail](https://github.com/dhs-ncats/trustymail), and
+[sslyze](https://github.com/nabla-c0d3/sslyze).
+
+This Docker container is intended to be run via
+[orchestrator](https://github.com/dhs-ncats/orchestrator).
+
+## License ##
+
+This project is in the worldwide [public domain](LICENSE.md).
+
+This project is in the public domain within the United States, and
+copyright and related rights in the work worldwide are waived through
+the [CC0 1.0 Universal public domain
+dedication](https://creativecommons.org/publicdomain/zero/1.0/).
+
+All contributions to this project will be released under the CC0
+dedication. By submitting a pull request, you are agreeing to comply
+with this waiver of copyright interest.
