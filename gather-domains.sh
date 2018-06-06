@@ -55,11 +55,6 @@ sed -i '$ a USMMA\.EDU,Federal Agency,Department of Transportation,Kings Point,N
 ###
 sed -i '$ a AON\.COM,Federal Agency,Department of the Treasury,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
 sed -i '$ a AONBENFIELD\.COM,Federal Agency,Department of the Treasury,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-###
-# We need to add the it-cnp.com domain for FMSHRC.  See OPS-2326 for
-# details.
-###
-sed -i '$ a IT-CNP\.COM,Federal Agency,Federal Mine Safety and Health Review Commission,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
