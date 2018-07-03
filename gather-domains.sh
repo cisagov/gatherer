@@ -55,6 +55,11 @@ sed -i '$ a USMMA\.EDU,Federal Agency,Department of Transportation,Kings Point,N
 ###
 sed -i '$ a AON\.COM,Federal Agency,Department of the Treasury,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
 sed -i '$ a AONBENFIELD\.COM,Federal Agency,Department of the Treasury,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+###
+# We need to add the usda.net domain for USDA.  See OPS-2673 for
+# details.
+###
+sed -i '$ a USDA\.NET,Federal Agency - Executive,U.S. Department of Agriculture,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
@@ -66,11 +71,11 @@ sed -i '$ a AONBENFIELD\.COM,Federal Agency,Department of the Treasury,Washingto
 # We are instead pulling an archived version of the data from GSA/data
 # on GitHub.
 #
-# Note that we have to include .edu and .com in the --suffix argument
-# because of the domains added above.
+# Note that we have to include .edu, .com, and .net in the --suffix
+# argument because of the domains added above.
 ###
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,other \
-                             --suffix=.gov,.edu,.com --ignore-www --include-parents \
+                             --suffix=.gov,.edu,.com,.net --ignore-www --include-parents \
                              --parents=$OUTPUT_DIR/current-federal_modified.csv \
                              --current_federal=$OUTPUT_DIR/current-federal_modified.csv \
                              --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
