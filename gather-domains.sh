@@ -45,10 +45,6 @@ sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d' $OUTPUT
 ###
 sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U.S. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' $OUTPUT_DIR/current-federal_modified.csv
 ###
-# Remove DHS
-###
-sed -i '/[^,]*,[^,]*,Department of Homeland Security,/d' $OUTPUT_DIR/current-federal_modified.csv
-###
 # We need to add the usmma.edu domain for DOT.  See OPS-2187 for
 # details.
 ###
