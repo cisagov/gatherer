@@ -60,6 +60,12 @@ sed -i '$ a AONBENFIELD\.COM,Federal Agency,Department of the Treasury,Washingto
 # details.
 ###
 sed -i '$ a USDA\.NET,Federal Agency - Executive,U.S. Department of Agriculture,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+###
+# We need to add the manufacturingusa.com and mfg.com domains for
+# DOC/NIST.  See OPS-3048 for details.
+###
+sed -i '$ a MANUFACTURINGUSA\.COM,Federal Agency - Executive,Department of Commerce,,Boulder,CO' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a MFGUSA\.COM,Federal Agency - Executive,Department of Commerce,,Boulder,CO' $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
