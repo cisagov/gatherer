@@ -48,13 +48,13 @@ sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing O
 # We need to add the usmma.edu domain for DOT.  See OPS-2187 for
 # details.
 ###
-sed -i '$ a USMMA\.EDU,Federal Agency,Department of Transportation,Kings Point,NY' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a USMMA\.EDU,Federal Agency - Executive,Department of Transportation,,Kings Point,NY' $OUTPUT_DIR/current-federal_modified.csv
 ###
 # We need to add the aon.com and aonbenfield.com domains for Treasury.
 # See OPS-2311 for details.
 ###
-sed -i '$ a AON\.COM,Federal Agency,Department of the Treasury,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-sed -i '$ a AONBENFIELD\.COM,Federal Agency,Department of the Treasury,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a AON\.COM,Federal Agency - Executive,Department of the Treasury,Washington,,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a AONBENFIELD\.COM,Federal Agency - Executive,Department of the Treasury,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
 ###
 # We need to add the usda.net domain for USDA.  See OPS-2673 for
 # details.
