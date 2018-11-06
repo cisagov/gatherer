@@ -95,10 +95,26 @@ cp results/gathered.csv gathered.csv
 cp results/gathered.csv $OUTPUT_DIR/gathered.csv
 
 # Remove extra columns
-cut -d"," -f1 gathered.csv  > scanme.csv
+cut -d"," -f1 gathered.csv  > scanme_with_ocsp_and_crl.csv
 
 # Remove characters that might break parsing
-sed -i '/^ *$/d;/@/d;s/ //g;s/\"//g;s/'\''//g' scanme.csv
+sed -i '/^ *$/d;/@/d;s/ //g;s/\"//g;s/'\''//g' scanme_with_ocsp_and_crl.csv
+
+# Grab OCSP/CRL hosts.  These hosts are to be removed from the list of
+# hosts to be scanned, since they are not required to satisfy BOD
+# 18-01.  For more information see here:
+# https://https.cio.gov/guide/#are-federally-operated-certificate-revocation-services-crl-ocsp-also-required-to-move-to-https
+wget https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/ocsp-crl.csv \
+     -O $OUTPUT_DIR/ocsp-crl.csv
+
+# Remove any lines that are in both ocsp-crl.csv and
+# scanme_with_ocsp_and_crl.csv.
+#
+# See the section titled "Two-file processing" for details on this bit
+# of awk wizardry:
+# https://backreference.org/2010/02/10/idiomatic-awk/
+awk 'NR == FNR{a[$0];next} !($0 in a)' \
+    $OUTPUT_DIR/ocsp-crl.csv scanme_with_ocsp_and_crl.csv > scanme.csv
 
 # Move the scanme to the output directory
 mv scanme.csv $OUTPUT_DIR/scanme.csv
