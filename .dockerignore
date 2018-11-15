@@ -1,5 +1,6 @@
 .git
 .gitignore
+.python-version
 .travis.yml
 LICENSE.md
 README.md
