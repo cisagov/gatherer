@@ -120,4 +120,4 @@ awk 'NR == FNR{a[$0];next} !($0 in a)' \
 mv scanme.csv $OUTPUT_DIR/scanme.csv
 
 # Let redis know we're done
-redis-cli -h orchestrator_redis_1 set gathering_complete true
+redis-cli -h redis set gathering_complete true
