@@ -118,7 +118,7 @@ awk 'NR == FNR{a[$0];next} !($0 in a)' \
     scanme_no_ocsp_crl.csv
 
 # Move the scanme files to the output directory
-mv scanme_include_ocsp_crl.csv scanme_with_ocsp_crl.csv $OUTPUT_DIR/
+mv scanme_include_ocsp_crl.csv scanme_no_ocsp_crl.csv $OUTPUT_DIR/
 
 # Let redis know we're done
 redis-cli -h redis set gathering_complete true
