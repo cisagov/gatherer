@@ -100,6 +100,16 @@ cut -d"," -f1 gathered.csv  > scanme.csv
 # Remove characters that might break parsing
 sed -i '/^ *$/d;/@/d;s/ //g;s/\"//g;s/'\''//g' scanme.csv
 
+# The latest Censys snapshot contains a host name that contains a few
+# carriage return characters in the middle of it.  Let's get rid of
+# those.
+sed -i 's/\r//g' scanme.csv
+
+# We collect a few host names that contain consecutive dots.  These
+# seem to always be typos, so replace multiple dots in host names with
+# a single dot.
+sed -i 's/\.\+/\./g' scanme.csv
+
 # Move the scanme to the output directory
 mv scanme.csv $OUTPUT_DIR/scanme.csv
 
