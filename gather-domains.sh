@@ -19,10 +19,11 @@ fi
 scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 
 ###
-# We need a copy of current-federal since we want to remove some
-# things from it and use the result to define our parent domains when
-# we run domain-scan.  We need the raw file, and domain-scan/gather
-# modifies the fields in the CSV, so we'll use wget here.
+# We need a copy of current-federal since we want to add and remove
+# some things from it and use the result to define our parent domains
+# when we run domain-scan.  We need the raw file, and
+# domain-scan/gather modifies the fields in the CSV, so we'll use wget
+# here.
 ###
 wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
      -O $OUTPUT_DIR/current-federal_modified.csv
@@ -66,6 +67,18 @@ sed -i '$ a USDA\.NET,Federal Agency - Executive,U.S. Department of Agriculture,
 ###
 sed -i '$ a MANUFACTURINGUSA\.COM,Federal Agency - Executive,Department of Commerce,,Boulder,CO' $OUTPUT_DIR/current-federal_modified.csv
 sed -i '$ a MFGUSA\.COM,Federal Agency - Executive,Department of Commerce,,Boulder,CO' $OUTPUT_DIR/current-federal_modified.csv
+###
+# We need to add several .net, .org, and.com domains for HHS.  See
+# OPS-3329 for details.
+###
+sed -i '$ a HEARTTRUTH\.NET,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a MEDLINEPLUS\.NET,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a NLM\.NET,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a THEHEARTTRUTH\.NET,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a HEARTTRUTH\.ORG,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a THEHEARTTRUTH\.ORG,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a PHPARTNERS\.ORG,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '$ a THEHEARTTRUTH\.COM,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
@@ -77,11 +90,11 @@ sed -i '$ a MFGUSA\.COM,Federal Agency - Executive,Department of Commerce,,Bould
 # We are instead pulling an archived version of the data from GSA/data
 # on GitHub.
 #
-# Note that we have to include .edu, .com, and .net in the --suffix
-# argument because of the domains added above.
+# Note that we have to include .edu, .com, .net, and .org in the
+# --suffix argument because of the domains added above.
 ###
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,other \
-                             --suffix=.gov,.edu,.com,.net --ignore-www --include-parents \
+                             --suffix=.gov,.edu,.com,.net,.org --ignore-www --include-parents \
                              --parents=$OUTPUT_DIR/current-federal_modified.csv \
                              --current_federal=$OUTPUT_DIR/current-federal_modified.csv \
                              --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
