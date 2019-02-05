@@ -26,14 +26,29 @@ scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 # here.
 ###
 wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
-     -O $OUTPUT_DIR/current-federal_modified.csv
+     -O $OUTPUT_DIR/current-federal.csv
+###
+# Concatenate current-federal.csv with our local list of
+# extra, non-.gov domains that the corresponding stakeholder has
+# requested we scan.  We have verified that the stakeholder controls
+# these domains.
+#
+# Note that we drop the first (header) line of the non-.gov file
+# before the concatenation.
+###
+tail -n +2 $INCLUDE_DIR/current-federal-non-dotgov.csv > \
+     /tmp/current-federal-non-dotgov.csv
+cat $OUTPUT_DIR/current-federal.csv \
+    /tmp/current-federal-non-dotgov.csv  > \
+    $OUTPUT_DIR/current-federal_modified.csv
 ###
 # Remove all domains that belong to US Courts, since they are part of
 # the judicial branch and have asked us to stop scanning them.
 #
 # Also remove all other domains that belong to the judicial branch.
 ###
-sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d' \
+    $OUTPUT_DIR/current-federal_modified.csv
 ###
 # Remove all domains that belong to the legislative branch, with the
 # exception of the House of Representatives (HOR).  HOR specifically
@@ -44,41 +59,8 @@ sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d' $OUTPUT
 # HOR if and only if the domain is labeled "The Legislative Branch
 # (Congress)" in current-federal.
 ###
-sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U.S. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' $OUTPUT_DIR/current-federal_modified.csv
-###
-# We need to add the usmma.edu domain for DOT.  See OPS-2187 for
-# details.
-###
-sed -i '$ a USMMA\.EDU,Federal Agency - Executive,Department of Transportation,,Kings Point,NY' $OUTPUT_DIR/current-federal_modified.csv
-###
-# We need to add the aon.com and aonbenfield.com domains for Treasury.
-# See OPS-2311 for details.
-###
-sed -i '$ a AON\.COM,Federal Agency - Executive,Department of the Treasury,Washington,,DC' $OUTPUT_DIR/current-federal_modified.csv
-sed -i '$ a AONBENFIELD\.COM,Federal Agency - Executive,Department of the Treasury,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-###
-# We need to add the usda.net domain for USDA.  See OPS-2673 for
-# details.
-###
-sed -i '$ a USDA\.NET,Federal Agency - Executive,U.S. Department of Agriculture,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-###
-# We need to add the manufacturingusa.com and mfg.com domains for
-# DOC/NIST.  See OPS-3048 for details.
-###
-sed -i '$ a MANUFACTURINGUSA\.COM,Federal Agency - Executive,Department of Commerce,,Boulder,CO' $OUTPUT_DIR/current-federal_modified.csv
-sed -i '$ a MFGUSA\.COM,Federal Agency - Executive,Department of Commerce,,Boulder,CO' $OUTPUT_DIR/current-federal_modified.csv
-###
-# We need to add several .net, .org, and.com domains for HHS.  See
-# OPS-3329 for details.
-###
-sed -i '$ a HEARTTRUTH\.NET,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-sed -i '$ a MEDLINEPLUS\.NET,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-sed -i '$ a NLM\.NET,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-sed -i '$ a THEHEARTTRUTH\.NET,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-sed -i '$ a HEARTTRUTH\.ORG,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-sed -i '$ a THEHEARTTRUTH\.ORG,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-sed -i '$ a PHPARTNERS\.ORG,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
-sed -i '$ a THEHEARTTRUTH\.COM,Federal Agency - Executive,Department of Health and Human Services,,Washington,DC' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U.S. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' \
+    $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
