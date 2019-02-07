@@ -42,7 +42,7 @@ cat $OUTPUT_DIR/current-federal.csv \
     /tmp/current-federal-non-dotgov.csv  > \
     $OUTPUT_DIR/current-federal_modified.csv
 ###
-# Remove the FED.US domain.  This is really a second-level domain,
+# Remove the FED.US domain.  This is really a top-level domain,
 # analogous to .gov or .com.  It is only present in current-federal as
 # an accident of the way the registrar treats it.
 ###
