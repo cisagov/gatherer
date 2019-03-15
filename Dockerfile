@@ -1,5 +1,5 @@
 FROM python:slim-stretch
-MAINTAINER Shane Frasier <jeremy.frasier@beta.dhs.gov>
+MAINTAINER Shane Frasier <jeremy.frasier@trio.dhs.gov>
 
 # Install git so we can checkout the domain-scan git repo.
 #

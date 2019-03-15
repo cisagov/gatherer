@@ -5,7 +5,6 @@
 
 HOME_DIR=/home/gatherer
 OUTPUT_DIR=$HOME_DIR/shared/artifacts
-INCLUDE_DIR=$HOME_DIR/include
 
 # Create the output directory, if necessary
 if [ ! -d $OUTPUT_DIR ]
@@ -28,15 +27,20 @@ scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
      -O $OUTPUT_DIR/current-federal.csv
 ###
-# Concatenate current-federal.csv with our local list of
-# extra, non-.gov domains that the corresponding stakeholder has
-# requested we scan.  We have verified that the stakeholder controls
-# these domains.
+# Grab our online list of extra, non-.gov domains that the
+# corresponding stakeholder has requested we scan.  We have verified
+# that the stakeholder controls these domains.
+###
+wget https://raw.githubusercontent.com/cisagov/scan-target-data/develop/current-federal-non-dotgov.csv \
+     -O $OUTPUT_DIR/current-federal-non-dotgov.csv
+###
+# Concatenate current-federal.csv with the list of extra, non-.gov
+# domains.
 #
 # Note that we drop the first (header) line of the non-.gov file
 # before the concatenation.
 ###
-tail -n +2 $INCLUDE_DIR/current-federal-non-dotgov.csv > \
+tail -n +2 $OUTPUT_DIR/current-federal-non-dotgov.csv > \
      /tmp/current-federal-non-dotgov.csv
 cat $OUTPUT_DIR/current-federal.csv \
     /tmp/current-federal-non-dotgov.csv  > \
@@ -89,8 +93,8 @@ $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,r
                              --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
                              --censys_snapshot=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/censys-federal-snapshot.csv \
                              --rapid=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/rdns-federal-snapshot.csv \
-                             --eot_2012=$INCLUDE_DIR/eot-2012.csv \
-                             --eot_2016=$INCLUDE_DIR/eot-2016.csv \
+                             --eot_2012=https://raw.githubusercontent.com/cisagov/scan-target-data/develop/eot-2012.csv \
+                             --eot_2016=https://raw.githubusercontent.com/cisagov/scan-target-data/develop/eot-2016.csv \
                              --cyhy=$OUTPUT_DIR/cyhy_fed_hostnames.csv \
                              --other=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/other-websites.csv
 cp results/gathered.csv gathered.csv
