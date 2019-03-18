@@ -76,7 +76,10 @@ def database_from_config_file(config_filename):
     exist
     """
     with open(config_filename, 'r') as stream:
-        config = yaml.load(stream)
+        # The loader must now be explicitly specified to avoid a
+        # warning message.  See here for more details:
+        # https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation
+        config = yaml.load(stream, Loader=yaml.FullLoader)
 
     db_uri = config['database']['uri']
     db_name = config['database']['name']
