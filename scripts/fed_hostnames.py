@@ -10,7 +10,7 @@ Usage:
 Options:
   -h --help                 Show this screen
   --version                 Show version
-  --db-creds-file=FILENAME  A YAML file containing the CYHY database 
+  --db-creds-file=FILENAME  A YAML file containing the CYHY database
                             credentials.
                             [default: /run/secrets/database_creds.yml]
   -d --debug                A Boolean value indicating whether the output
@@ -20,11 +20,8 @@ Options:
 
 """
 
-import datetime
 import logging
-import os
 import re
-import sys
 
 from docopt import docopt
 from pymongo import MongoClient
@@ -33,7 +30,9 @@ import yaml
 
 
 # The ports that are most commonly used by public-facing web servers
-WebServerPorts = {80, 280, 443, 591, 593, 832, 8080, 8888, 4443, 8443, 9443, 10443}
+WebServerPorts = {
+    80, 280, 443, 591, 593, 832, 8080, 8888, 4443, 8443, 9443, 10443
+}
 
 # The ports that are most commonly used by mail servers
 MailServerPorts = {25, 110, 143, 465, 587, 993, 995, 2525}
@@ -77,13 +76,17 @@ def database_from_config_file(config_filename):
     exist
     """
     with open(config_filename, 'r') as stream:
-        config = yaml.load(stream)
+        # The loader must now be explicitly specified to avoid a
+        # warning message.  See here for more details:
+        # https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation
+        config = yaml.load(stream, Loader=yaml.FullLoader)
 
     db_uri = config['database']['uri']
     db_name = config['database']['name']
 
     db_connection = MongoClient(host=db_uri, tz_aware=True)
     return db_connection[db_name]
+
 
 def get_all_descendants(database, owner):
     """Return all (non-retired) descendents of the given Cyber Hygiene
@@ -115,6 +118,7 @@ def get_all_descendants(database, owner):
 
     return descendants
 
+
 def main():
     global __doc__
     __doc__ = re.sub('COMMAND_NAME', __file__, __doc__)
@@ -124,25 +128,31 @@ def main():
     log_level = logging.WARNING
     if args['--debug']:
         log_level = logging.DEBUG
-    logging.basicConfig(format='%(asctime)-15s %(levelname)s %(message)s', level=log_level)
+    logging.basicConfig(format='%(asctime)-15s %(levelname)s %(message)s',
+                        level=log_level)
 
     db_creds_file = args['--db-creds-file']
     try:
         db = database_from_config_file(db_creds_file)
     except OSError:
-        logging.critical('Database configuration file {} does not exist'.format(db_creds_file), exc_info=True)
+        logging.critical('Database configuration file {} does not exist'.format(db_creds_file),
+                         exc_info=True)
         return 1
     except yaml.YAMLError:
-        logging.critical('Database configuration file {} does not contain valid YAML'.format(db_creds_file), exc_info=True)
+        logging.critical('Database configuration file {} does not contain valid YAML'.format(db_creds_file),
+                         exc_info=True)
         return 1
     except KeyError:
-        logging.critical('Database configuration file {} does not contain the expected keys'.format(db_creds_file), exc_info=True)
+        logging.critical('Database configuration file {} does not contain the expected keys'.format(db_creds_file),
+                         exc_info=True)
         return 1
     except pymongo.errors.ConnectionError:
-        logging.critical('Unable to connect to the database server in {}'.format(db_creds_file), exc_info=True)
+        logging.critical('Unable to connect to the database server in {}'.format(db_creds_file),
+                         exc_info=True)
         return 1
     except pymongo.errors.InvalidName:
-        logging.critical('The database in {} does not exist'.format(db_creds_file), exc_info=True)
+        logging.critical('The database in {} does not exist'.format(db_creds_file),
+                         exc_info=True)
         return 1
 
     # Get all Federal organizations
@@ -151,15 +161,49 @@ def main():
 
     # Get all Federal hosts with open ports that indicate a possible web or
     # email server (latest scan only)...
-    potential_web_or_email_server_ips = {i['ip_int'] for i in db.port_scans.find({'latest': True, 'owner': {'$in': fed_orgs}, 'port': {'$in': list(WebServerPorts | MailServerPorts)}}, {'_id': False, 'ip_int': True})}
+    potential_web_or_email_server_ips = {
+        i['ip_int'] for i in db.port_scans.find(
+            {
+                'latest': True,
+                'owner': {
+                    '$in': fed_orgs
+                },
+                'port': {
+                    '$in': list(WebServerPorts | MailServerPorts)
+                }
+            },
+            {
+                '_id': False,
+                'ip_int': True
+            }
+        )
+    }
     # ...of these, get all Federal hosts with a detected hostname (latest scan
     # only)
-    fed_hosts = db.host_scans.find({'latest': True, 'ip_int': {'$in': list(potential_web_or_email_server_ips)}, 'owner': {'$in': fed_orgs}, 'hostname': {'$ne': None}}, {'_id': False, 'hostname': True, 'owner': True})
+    fed_hosts = db.host_scans.find(
+        {
+            'latest': True,
+            'ip_int': {
+                '$in': list(potential_web_or_email_server_ips)
+            },
+            'owner': {
+                '$in': fed_orgs
+            },
+            'hostname': {
+                '$ne': None
+            }
+        },
+        {
+            '_id': False,
+            'hostname': True,
+            'owner': True}
+    )
 
     with open(args['--output-file'], 'w') as file:
         for host in fed_hosts:
             file.write('{},{}\n'.format(host['hostname'], host['owner']))
             logging.debug('Federal host {}'.format(host))
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     main()
