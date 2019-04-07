@@ -33,8 +33,7 @@ RUN git clone https://github.com/18F/domain-scan /home/gatherer/domain-scan/ \
 # Install some dependencies for scripts/fed_hostnames.py
 RUN pip install --upgrade \
     docopt \
-    https://github.com/cisagov/mongo-db-from-config/tarball/develop \
-    pyyaml
+    https://github.com/cisagov/mongo-db-from-config/tarball/develop
 
 # Clean up aptitude cruft
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
