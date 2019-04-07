@@ -34,7 +34,6 @@ RUN git clone https://github.com/18F/domain-scan /home/gatherer/domain-scan/ \
 RUN pip install --upgrade \
     docopt \
     https://github.com/cisagov/mongo-db-from-config/tarball/develop \
-    pymongo \
     pyyaml
 
 # Clean up aptitude cruft
