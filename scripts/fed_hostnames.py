@@ -24,7 +24,7 @@ import logging
 import re
 
 from docopt import docopt
-from pymongo import MongoClient
+from mongo_db_from_config import db_from_config
 import pymongo.errors
 import yaml
 
@@ -36,56 +36,6 @@ WebServerPorts = {
 
 # The ports that are most commonly used by mail servers
 MailServerPorts = {25, 110, 143, 465, 587, 993, 995, 2525}
-
-
-def database_from_config_file(config_filename):
-    """Given the name of the YAML file containing the configuration
-    information, return a corresponding MongoDB connection.
-
-    The configuration file should something look like this:
-        version: '1'
-
-        database:
-          name: cyhy
-          uri: mongodb://<read-only user>:<password>@<hostname>:<port>/cyhy
-
-    Parameters
-    ----------
-    config_filename : str
-        The name of the YAML file containing the configuration
-        information
-
-    Returns
-    -------
-    MongoDatabase: A connection to the desired MongoDB database
-
-    Throws
-    ------
-    OSError: If the database configuration file does not exist
-
-    yaml.YAMLError: If the YAML in the database configuration file is
-    invalid
-
-    KeyError: If the YAML in the database configuration file is valid
-    YAML but does not contain the expected keys
-
-    pymongo.errors.ConnectionError: If unable to connect to the
-    requested server
-
-    pymongo.errors.InvalidName: If the requested database does not
-    exist
-    """
-    with open(config_filename, 'r') as stream:
-        # The loader must now be explicitly specified to avoid a
-        # warning message.  See here for more details:
-        # https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation
-        config = yaml.load(stream, Loader=yaml.FullLoader)
-
-    db_uri = config['database']['uri']
-    db_name = config['database']['name']
-
-    db_connection = MongoClient(host=db_uri, tz_aware=True)
-    return db_connection[db_name]
 
 
 def get_all_descendants(database, owner):
@@ -133,7 +83,7 @@ def main():
 
     db_creds_file = args['--db-creds-file']
     try:
-        db = database_from_config_file(db_creds_file)
+        db = db_from_config(db_creds_file)
     except OSError:
         logging.critical('Database configuration file {} does not exist'.format(db_creds_file),
                          exc_info=True)
