@@ -7,6 +7,7 @@ LABEL organization="CISA Cyber Assessments"
 LABEL url="https://github.com/cisagov/gatherer"
 
 ENV HOME=/home/gatherer
+ENV USER=gatherer
 
 ###
 # Dependencies
@@ -60,21 +61,21 @@ RUN rm -rf /var/lib/apt/lists/*
 
 
 ###
-# Setup the gatherer user and its home directory
+# Setup the user and its home directory
 ###
 FROM install AS setup_user
 
 ###
 # Create unprivileged user
 ###
-RUN groupadd -r gatherer
-RUN useradd -r -c "Gatherer user" -g gatherer gatherer
+RUN groupadd -r $USER
+RUN useradd -r -c "$USER user" -g $USER $USER
 
 # Put this just before we change users because the copy (and every
 # step after it) will always be rerun by docker, but we need to be
 # root for the chown command.
 COPY . $HOME
-RUN chown -R gatherer:gatherer $HOME
+RUN chown -R ${USER}:${USER} $HOME
 
 
 ###
@@ -87,6 +88,6 @@ FROM setup_user AS final
 ###
 # Right now we need to be root at runtime in order to create files in
 # /home/shared
-# USER gatherer:gatherer
+# USER ${USER}:${USER}
 WORKDIR $HOME
 ENTRYPOINT ["./gather-domains.sh"]
