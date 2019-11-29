@@ -12,6 +12,9 @@ ENV USER=gatherer
 ###
 # Dependencies
 #
+# We need redis-tools so we can use redis-cli to communicate with
+# redis.  wget is used inside of gather-domains.sh.
+#
 # Install dependencies are only needed for software installation and
 # will be removed at the end of the build process.
 ###
