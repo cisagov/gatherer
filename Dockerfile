@@ -44,7 +44,7 @@ RUN pip install --no-cache-dir --upgrade \
 ###
 # Install some dependencies for scripts/fed_hostnames.py
 ###
-RUN pip install --upgrade \
+RUN pip install --no-cache-dir --upgrade \
     docopt \
     https://github.com/cisagov/mongo-db-from-config/tarball/develop
 
