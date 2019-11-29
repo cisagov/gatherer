@@ -20,7 +20,6 @@ ENV DEPS \
     redis-tools \
     wget
 ENV INSTALL_DEPS \
-    curl \
     git
 RUN apt-get update --quiet --quiet
 RUN apt-get upgrade --quiet --quiet
