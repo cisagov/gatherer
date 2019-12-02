@@ -51,9 +51,9 @@ RUN pip install --no-cache-dir --upgrade \
     https://github.com/cisagov/mongo-db-from-config/tarball/develop
 
 ###
-# Remove build dependencies
+# Remove install dependencies
 ###
-RUN apt-get remove --quiet --quiet $BUILD_DEPS
+RUN apt-get remove --quiet --quiet $INSTALL_DEPS
 
 ###
 # Clean up aptitude cruft
