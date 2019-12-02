@@ -1,52 +1,99 @@
-FROM python:slim-stretch
-MAINTAINER Shane Frasier <jeremy.frasier@trio.dhs.gov>
+###
+# Install everything we need
+###
+FROM python:3.6-slim-buster AS install
+LABEL maintainer="jeremy.frasier@trio.dhs.gov"
+LABEL organization="CISA Cyber Assessments"
+LABEL url="https://github.com/cisagov/gatherer"
 
-# Install git so we can checkout the domain-scan git repo.
+ENV HOME=/home/gatherer
+ENV USER=gatherer
+
+###
+# Dependencies
 #
-# Install redis to we can use redis-cli to communicate with redis.
+# We need redis-tools so we can use redis-cli to communicate with
+# redis.  wget is used inside of gather-domains.sh.
 #
-# Finally, we need wget to pull the latest list of Federal domains
-# from GitHub.
-RUN apt-get --quiet update \
-    && apt-get install --quiet --assume-yes \
-    git \
+# Install dependencies are only needed for software installation and
+# will be removed at the end of the build process.
+###
+ENV DEPS \
+    bash \
     redis-tools \
     wget
+ENV INSTALL_DEPS \
+    git
+RUN apt-get update --quiet --quiet
+RUN apt-get upgrade --quiet --quiet
+RUN apt-get install --quiet --quiet --yes \
+    --no-install-recommends --no-install-suggests \
+    $DEPS $INSTALL_DEPS
 
-# Create unprivileged user
-ENV GATHERER_HOME=/home/gatherer
-RUN mkdir ${GATHERER_HOME} \
-    && addgroup --system gatherer \
-    && adduser --system --gecos "Gatherer user" --group gatherer \
-    && chown -R gatherer:gatherer ${GATHERER_HOME}
-
-##
+###
 # Make sure pip and setuptools are the latest versions
-##
-RUN pip install --upgrade pip setuptools
+#
+# Note that we use pip --no-cache-dir to avoid writing to a local
+# cache.  This results in a smaller final image, at the cost of
+# slightly longer install times.
+###
+RUN pip install --no-cache-dir --upgrade pip setuptools
 
+###
 # Install domain-scan
-RUN git clone https://github.com/18F/domain-scan /home/gatherer/domain-scan/ \
-    && pip install --upgrade -r /home/gatherer/domain-scan/requirements.txt \
-                             -r /home/gatherer/domain-scan/requirements-gatherers.txt
+###
+RUN git clone https://github.com/18F/domain-scan \
+    ${HOME}/domain-scan/
+RUN pip install --no-cache-dir --upgrade \
+    --requirement ${HOME}/domain-scan/requirements.txt
 
+###
 # Install some dependencies for scripts/fed_hostnames.py
-RUN pip install --upgrade \
+###
+RUN pip install --no-cache-dir --upgrade \
     docopt \
     https://github.com/cisagov/mongo-db-from-config/tarball/develop
 
+###
+# Remove install dependencies
+###
+RUN apt-get remove --quiet --quiet $INSTALL_DEPS
+
+###
 # Clean up aptitude cruft
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+###
+RUN apt-get --quiet --quiet clean
+RUN rm -rf /var/lib/apt/lists/*
+
+
+###
+# Setup the user and its home directory
+###
+FROM install AS setup_user
+
+###
+# Create unprivileged user
+###
+RUN groupadd -r $USER
+RUN useradd -r -c "$USER user" -g $USER $USER
 
 # Put this just before we change users because the copy (and every
-# step after it) will often be rerun by docker, but we need to be root
-# for the chown command.
-COPY . $GATHERER_HOME
-RUN chown -R gatherer:gatherer ${GATHERER_HOME}
+# step after it) will always be rerun by docker, but we need to be
+# root for the chown command.
+COPY . $HOME
+RUN chown -R ${USER}:${USER} $HOME
+
+
+###
+# Setup working directory and entrypoint
+###
+FROM setup_user AS final
 
 ###
 # Prepare to Run
 ###
-# USER gatherer:gatherer
-WORKDIR $GATHERER_HOME
+# Right now we need to be root at runtime in order to create files in
+# /home/shared
+# USER ${USER}:${USER}
+WORKDIR $HOME
 ENTRYPOINT ["./gather-domains.sh"]
