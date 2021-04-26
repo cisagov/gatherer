@@ -24,7 +24,7 @@ scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 # domain-scan/gather modifies the fields in the CSV, so we'll use wget
 # here.
 ###
-wget https://raw.githubusercontent.com/GSA/data/master/dotgov-domains/current-federal.csv \
+wget https://raw.githubusercontent.com/cisagov/dotgov-data/main/current-federal.csv \
      -O $OUTPUT_DIR/current-federal.csv
 ###
 # Grab our online list of extra, non-.gov domains that the
