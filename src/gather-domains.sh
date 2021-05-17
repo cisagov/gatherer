@@ -91,9 +91,8 @@ sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing O
 TOP_LEVEL_DOMAINS=$(cut --delimiter=, --fields=1 $OUTPUT_DIR/current-federal_modified.csv | \
                         tail --lines=+2 | \
                         sed "s/^.*\(\.[^\.]*\)$/\1/" | \
+                        sort --ignore-case --unique | \
                         tr "[:upper:]" "[:lower:]" | \
-                        sort | \
-                        uniq | \
                         paste --serial --delimiters=,)
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,other \
   --suffix="$TOP_LEVEL_DOMAINS" --ignore-www --include-parents \
