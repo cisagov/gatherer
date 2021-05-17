@@ -1,6 +1,6 @@
 ARG VERSION=unspecified
 
-FROM python:3.6-slim-buster
+FROM python:3.9-slim-buster
 
 ARG VERSION
 
