@@ -82,7 +82,7 @@ sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing O
 # We are instead pulling an archived version of the data from GSA/data
 # on GitHub.
 #
-# Note that we have to include .gov as well as.edu, .com, and other
+# Note that we have to include .gov as well as .edu, .com, and other
 # top-level domains in the --suffix argument because of the domains
 # included in include/current-federal-non-dotgov.csv.  The full list
 # of these top-level domains is automatically extracted into the
