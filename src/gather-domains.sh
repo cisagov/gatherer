@@ -82,12 +82,21 @@ sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing O
 # We are instead pulling an archived version of the data from GSA/data
 # on GitHub.
 #
-# Note that we have to include .edu, .com, .net, .org, and .us in the
-# --suffix argument because of the domains included in
-# include/current-federal-non-dotgov.csv
+# Note that we have to include .gov as well as.edu, .com, and other
+# top-level domains in the --suffix argument because of the domains
+# included in include/current-federal-non-dotgov.csv.  The full list
+# of these top-level domains is automatically extracted into the
+# TOP_LEVEL_DOMAINS variable.
 ###
+TOP_LEVEL_DOMAINS=$(cut --delimiter=, --fields=1 $OUTPUT_DIR/current-federal_modified.csv | \
+                        tail --lines=+2 | \
+                        sed "s/^.*\(\.[^\.]*\)$/\1/" | \
+                        tr "[:upper:]" "[:lower:]" | \
+                        sort | \
+                        uniq | \
+                        paste --serial --delimiters=,)
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,other \
-  --suffix=.gov,.edu,.com,.net,.org,.us --ignore-www --include-parents \
+  --suffix="$TOP_LEVEL_DOMAINS" --ignore-www --include-parents \
   --parents=$OUTPUT_DIR/current-federal_modified.csv \
   --current_federal=$OUTPUT_DIR/current-federal_modified.csv \
   --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
