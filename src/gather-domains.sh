@@ -89,8 +89,7 @@ sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing O
 # TOP_LEVEL_DOMAINS variable.
 ###
 TOP_LEVEL_DOMAINS=$(cut --delimiter=, --fields=1 $OUTPUT_DIR/current-federal_modified.csv | \
-                        tail --lines=+2 | \
-                        sed "s/^.*\(\.[^\.]*\)$/\1/" | \
+                        awk -F"." '{if (NR > 1) print "."$NF;}' | \
                         sort --ignore-case --unique | \
                         tr "[:upper:]" "[:lower:]" | \
                         paste --serial --delimiters=,)
