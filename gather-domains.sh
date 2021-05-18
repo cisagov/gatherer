@@ -96,7 +96,7 @@ $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,r
                              --eot_2012=https://raw.githubusercontent.com/cisagov/scan-target-data/develop/eot-2012.csv \
                              --eot_2016=https://raw.githubusercontent.com/cisagov/scan-target-data/develop/eot-2016.csv \
                              --cyhy=$OUTPUT_DIR/cyhy_fed_hostnames.csv \
-                             --other=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/other-websites.csv
+                             --other=https://raw.githubusercontent.com/cisagov/dotgov-data/blob/main/dotgov-websites/other-websites.csv
 cp results/gathered.csv gathered.csv
 cp results/gathered.csv $OUTPUT_DIR/gathered.csv
 
