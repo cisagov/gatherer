@@ -15,9 +15,13 @@ services:
       # e.g., --build-arg VERSION=0.0.1
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      - redis
     image: cisagov/gatherer
     init: true
     restart: "no"
     secrets:
       - source: database_creds
         target: database_creds.yml
+  redis:
+    image: redis:alpine
