@@ -1,13 +1,34 @@
+ARG VERSION=unspecified
+
+FROM python:3.6-slim-buster
+
+ARG VERSION
+
+# For a list of pre-defined annotation keys and value types see:
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+# Note: Additional labels are added by the build workflow.
+LABEL org.opencontainers.image.authors="jeremy.frasier@cisa.dhs.gov"
+LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security Agency"
+
+###
+# Setup the user and its home directory
+###
+
+ARG CISA_GID=421
+ARG CISA_UID=${CISA_GID}
+ENV CISA_USER="gatherer"
+ENV CISA_GROUP=${CISA_USER}
+ENV CISA_HOME="/home/gatherer"
+
+###
+# Create unprivileged user
+###
+RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP}
+RUN useradd --system --uid ${CISA_UID} --gid ${CISA_GROUP} --comment "${CISA_USER} user" ${CISA_USER}
+
 ###
 # Install everything we need
 ###
-FROM python:3.6-slim-buster AS install
-LABEL maintainer="jeremy.frasier@trio.dhs.gov"
-LABEL organization="CISA Cyber Assessments"
-LABEL url="https://github.com/cisagov/gatherer"
-
-ENV HOME=/home/gatherer
-ENV USER=gatherer
 
 ###
 # Dependencies
@@ -43,9 +64,9 @@ RUN pip install --no-cache-dir --upgrade pip setuptools
 # Install domain-scan
 ###
 RUN git clone https://github.com/18F/domain-scan \
-    ${HOME}/domain-scan/
+    ${CISA_HOME}/domain-scan/
 RUN pip install --no-cache-dir --upgrade \
-    --requirement ${HOME}/domain-scan/requirements.txt
+    --requirement ${CISA_HOME}/domain-scan/requirements.txt
 
 ###
 # Install some dependencies for scripts/fed_hostnames.py
@@ -67,33 +88,20 @@ RUN rm -rf /var/lib/apt/lists/*
 
 
 ###
-# Setup the user and its home directory
+# Setup working directory and entrypoint
 ###
-FROM install AS setup_user
-
-###
-# Create unprivileged user
-###
-RUN groupadd -r $USER
-RUN useradd -r -c "$USER user" -g $USER $USER
 
 # Put this just before we change users because the copy (and every
 # step after it) will always be rerun by docker, but we need to be
 # root for the chown command.
-COPY . $HOME
-RUN chown -R ${USER}:${USER} $HOME
-
-
-###
-# Setup working directory and entrypoint
-###
-FROM setup_user AS final
+COPY . ${CISA_HOME}
+RUN chown -R ${CISA_USER}:${CISA_GROUP} ${CISA_HOME}
 
 ###
 # Prepare to Run
 ###
 # Right now we need to be root at runtime in order to create files in
-# /home/shared
-# USER ${USER}:${USER}
-WORKDIR $HOME
+# ${CISA_HOME}/shared
+# USER ${CISA_USER}:${CISA_GROUP}
+WORKDIR ${CISA_HOME}
 ENTRYPOINT ["./gather-domains.sh"]
