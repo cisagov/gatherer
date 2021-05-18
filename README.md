@@ -55,7 +55,7 @@ This container supports no environment variables.
 
 | Mount point | Purpose        |
 |-------------|----------------|
-| /home/gatherer/shared | Output |
+| /home/cisa/shared | Output |
 
 ## Contributing ##
 

@@ -3,7 +3,7 @@
 # Gather hostnames and do any necessary scrubbing of the data.
 ###
 
-HOME_DIR=/home/gatherer
+HOME_DIR=/home/cisa
 OUTPUT_DIR=$HOME_DIR/shared/artifacts
 
 # Create the output directory, if necessary

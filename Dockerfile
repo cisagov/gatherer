@@ -16,9 +16,9 @@ LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security
 
 ARG CISA_GID=421
 ARG CISA_UID=${CISA_GID}
-ENV CISA_USER="gatherer"
+ENV CISA_USER="cisa"
 ENV CISA_GROUP=${CISA_USER}
-ENV CISA_HOME="/home/gatherer"
+ENV CISA_HOME="/home/cisa"
 
 ###
 # Create unprivileged user
