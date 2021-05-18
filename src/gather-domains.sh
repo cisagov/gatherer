@@ -15,7 +15,7 @@ fi
 ###
 # Grab any extra Federal hostnames that CYHY knows about
 ###
-scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
+./fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 
 ###
 # We need a copy of current-federal since we want to add and remove
