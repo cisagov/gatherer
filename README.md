@@ -1,4 +1,4 @@
-# gatherer :notebook: :file_folder: #
+# gatherer #
 
 [![GitHub Build Status](https://github.com/cisagov/gatherer/workflows/build/badge.svg)](https://github.com/cisagov/gatherer/actions)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/gatherer.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/gatherer/alerts/)
@@ -56,7 +56,6 @@ This container supports no environment variables.
 | Mount point | Purpose        |
 |-------------|----------------|
 | /home/gatherer/shared | Output |
-
 
 ## Contributing ##
 
