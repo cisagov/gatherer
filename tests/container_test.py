@@ -1,5 +1,7 @@
 #!/usr/bin/env pytest -vs
 """Tests for example container."""
+# TODO: Make container tests functional
+# See https://github.com/cisagov/gatherer/issues/57
 
 # Standard Python Libraries
 import os
