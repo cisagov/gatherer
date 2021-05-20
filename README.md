@@ -19,6 +19,12 @@ a precursor to scanning by [pshtt](https://github.com/cisagov/pshtt),
 This Docker container is intended to be run via
 [orchestrator](https://github.com/cisagov/orchestrator).
 
+__N.B.:__ The secrets in the `src/secrets` directory are only used
+when testing via the `docker-compose.yml` composition.  Normally this
+Docker container is run via the Docker composition in
+[cisagov/orchestrator](https://github.com/cisagov/orchestrator), which
+expects the secrets in a different location.
+
 ## Usage ##
 
 ### Install ###
