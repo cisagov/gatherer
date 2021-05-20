@@ -3,19 +3,19 @@
 # Gather hostnames and do any necessary scrubbing of the data.
 ###
 
-HOME_DIR=/home/gatherer
+HOME_DIR=/home/cisa
 OUTPUT_DIR=$HOME_DIR/shared/artifacts
 
 # Create the output directory, if necessary
 if [ ! -d $OUTPUT_DIR ]
 then
-    mkdir $OUTPUT_DIR
+  mkdir $OUTPUT_DIR
 fi
 
 ###
 # Grab any extra Federal hostnames that CYHY knows about
 ###
-scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
+./fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 
 ###
 # We need a copy of current-federal since we want to add and remove
@@ -25,14 +25,14 @@ scripts/fed_hostnames.py --output-file=$OUTPUT_DIR/cyhy_fed_hostnames.csv
 # here.
 ###
 wget https://raw.githubusercontent.com/cisagov/dotgov-data/main/current-federal.csv \
-     -O $OUTPUT_DIR/current-federal.csv
+  -O $OUTPUT_DIR/current-federal.csv
 ###
 # Grab our online list of extra, non-.gov domains that the
 # corresponding stakeholder has requested we scan.  We have verified
 # that the stakeholder controls these domains.
 ###
 wget https://raw.githubusercontent.com/cisagov/scan-target-data/develop/current-federal-non-dotgov.csv \
-     -O $OUTPUT_DIR/current-federal-non-dotgov.csv
+  -O $OUTPUT_DIR/current-federal-non-dotgov.csv
 ###
 # Concatenate current-federal.csv with the list of extra, non-.gov
 # domains.
@@ -41,10 +41,10 @@ wget https://raw.githubusercontent.com/cisagov/scan-target-data/develop/current-
 # before the concatenation.
 ###
 tail -n +2 $OUTPUT_DIR/current-federal-non-dotgov.csv > \
-     /tmp/current-federal-non-dotgov.csv
+  /tmp/current-federal-non-dotgov.csv
 cat $OUTPUT_DIR/current-federal.csv \
-    /tmp/current-federal-non-dotgov.csv  > \
-    $OUTPUT_DIR/current-federal_modified.csv
+  /tmp/current-federal-non-dotgov.csv  > \
+  $OUTPUT_DIR/current-federal_modified.csv
 ###
 # Remove the FED.US domain.  This is really a top-level domain,
 # analogous to .gov or .com.  It is only present in current-federal as
@@ -58,7 +58,7 @@ sed -i '/^FED\.US,.*/d' $OUTPUT_DIR/current-federal_modified.csv
 # Also remove all other domains that belong to the judicial branch.
 ###
 sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d' \
-    $OUTPUT_DIR/current-federal_modified.csv
+  $OUTPUT_DIR/current-federal_modified.csv
 ###
 # Remove all domains that belong to the legislative branch, with the
 # exception of the House of Representatives (HOR).  HOR specifically
@@ -70,7 +70,7 @@ sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d' \
 # (Congress)" in current-federal.
 ###
 sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U.S. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' \
-    $OUTPUT_DIR/current-federal_modified.csv
+  $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
@@ -87,16 +87,16 @@ sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing O
 # include/current-federal-non-dotgov.csv
 ###
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,other \
-                             --suffix=.gov,.edu,.com,.net,.org,.us --ignore-www --include-parents \
-                             --parents=$OUTPUT_DIR/current-federal_modified.csv \
-                             --current_federal=$OUTPUT_DIR/current-federal_modified.csv \
-                             --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
-                             --censys_snapshot=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/censys-federal-snapshot.csv \
-                             --rapid=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/rdns-federal-snapshot.csv \
-                             --eot_2012=https://raw.githubusercontent.com/cisagov/scan-target-data/develop/eot-2012.csv \
-                             --eot_2016=https://raw.githubusercontent.com/cisagov/scan-target-data/develop/eot-2016.csv \
-                             --cyhy=$OUTPUT_DIR/cyhy_fed_hostnames.csv \
-                             --other=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/other-websites.csv
+  --suffix=.gov,.edu,.com,.net,.org,.us --ignore-www --include-parents \
+  --parents=$OUTPUT_DIR/current-federal_modified.csv \
+  --current_federal=$OUTPUT_DIR/current-federal_modified.csv \
+  --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
+  --censys_snapshot=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/censys-federal-snapshot.csv \
+  --rapid=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/rdns-federal-snapshot.csv \
+  --eot_2012=https://raw.githubusercontent.com/cisagov/scan-target-data/develop/eot-2012.csv \
+  --eot_2016=https://raw.githubusercontent.com/cisagov/scan-target-data/develop/eot-2016.csv \
+  --cyhy=$OUTPUT_DIR/cyhy_fed_hostnames.csv \
+  --other=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/other-websites.csv
 cp results/gathered.csv gathered.csv
 cp results/gathered.csv $OUTPUT_DIR/gathered.csv
 

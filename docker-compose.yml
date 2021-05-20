@@ -1,0 +1,27 @@
+---
+version: "3.7"
+
+# This docker-compose file is used to build the container
+
+secrets:
+  database_creds:
+    file: ./src/secrets/database_creds.yml
+
+services:
+  gatherer:
+    # Run the container normally
+    build:
+      # VERSION must be specified on the command line:
+      # e.g., --build-arg VERSION=0.0.1
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+    image: cisagov/gatherer
+    init: true
+    restart: "no"
+    secrets:
+      - source: database_creds
+        target: database_creds.yml
+  redis:
+    image: redis:alpine
