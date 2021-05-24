@@ -73,13 +73,13 @@ sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing O
   $OUTPUT_DIR/current-federal_modified.csv
 
 ###
-# Gather hostnames using GSA/data, analytics.usa.gov, Censys, EOT,
+# Gather hostnames using cisagov/dotgov-data, analytics.usa.gov, Censys, EOT,
 # Rapid7's Reverse DNS v2, CyHy, and any local additions.
 #
 # We need --include-parents here to get the second-level domains.
 #
 # Censys is no longer free as of 12/1/2017, so we do not have access.
-# We are instead pulling an archived version of the data from GSA/data
+# We are instead pulling an archived version of the data from cisagov/dotgov-data
 # on GitHub.
 #
 # Note that we have to include .gov as well as .edu, .com, and other
@@ -104,12 +104,12 @@ $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,r
   --parents=$OUTPUT_DIR/current-federal_modified.csv \
   --current_federal=$OUTPUT_DIR/current-federal_modified.csv \
   --analytics_usa_gov=https://analytics.usa.gov/data/live/sites.csv \
-  --censys_snapshot=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/censys-federal-snapshot.csv \
-  --rapid=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/rdns-federal-snapshot.csv \
+  --censys_snapshot=https://raw.githubusercontent.com/cisagov/dotgov-data/main/dotgov-websites/censys-federal-snapshot.csv \
+  --rapid=https://raw.githubusercontent.com/cisagov/dotgov-data/main/dotgov-websites/rdns-federal-snapshot.csv \
   --eot_2012=https://raw.githubusercontent.com/cisagov/scan-target-data/develop/eot-2012.csv \
   --eot_2016=https://raw.githubusercontent.com/cisagov/scan-target-data/develop/eot-2016.csv \
   --cyhy=$OUTPUT_DIR/cyhy_fed_hostnames.csv \
-  --other=https://raw.githubusercontent.com/GSA/data/master/dotgov-websites/other-websites.csv
+  --other=https://raw.githubusercontent.com/cisagov/dotgov-data/main/dotgov-websites/other-websites.csv
 cp results/gathered.csv gathered.csv
 cp results/gathered.csv $OUTPUT_DIR/gathered.csv
 
