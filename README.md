@@ -1,8 +1,8 @@
 # Gatherer #
 
 [![GitHub Build Status](https://github.com/cisagov/gatherer/workflows/build/badge.svg)](https://github.com/cisagov/gatherer/actions)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/gatherer.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/gatherer/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/gatherer.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/gatherer/context:python)
+[![CodeQL](https://github.com/cisagov/gatherer/workflows/CodeQL/badge.svg)](https://github.com/cisagov/gatherer/actions/workflows/codeql-analysis.yml)
+[![Known Vulnerabilities](https://snyk.io/test/github/cisagov/gatherer/badge.svg)](https://snyk.io/test/github/cisagov/gatherer)
 
 ## Docker Image ##
 
@@ -25,31 +25,160 @@ Docker container is run via the Docker composition in
 [cisagov/orchestrator](https://github.com/cisagov/orchestrator), which
 expects the secrets in a different location.
 
-## Usage ##
+## Running ##
 
-### Install ###
+### Running with Docker ###
 
-Pull `cisagov/gatherer` from the Docker repository:
+To run the `cisagov/gatherer` image via Docker:
 
-    docker pull cisagov/gatherer
+```console
+docker run cisagov/gatherer:0.0.1
+```
 
-Or build `cisagov/gatherer` from source:
+### Running with Docker Compose ###
 
-    git clone https://github.com/cisagov/gatherer.git
-    cd gatherer
-    docker-compose build --build-arg VERSION=0.0.1
+1. Create a `docker-compose.yml` file similar to the one below to use [Docker Compose](https://docs.docker.com/compose/).
 
-### Run ###
+    ```yaml
+    ---
+    version: "3.7"
 
-    docker-compose run --rm gatherer
+    services:
+      gatherer:
+        image: cisagov/gatherer:0.0.1
+        volumes:
+          - type: bind
+            source: <your_output_dir>
+            target: /home/cisa/shared
+    ```
 
-## Ports ##
+1. Start the container and detach:
 
-This container exposes no ports.
+    ```console
+    docker-compose up --detach
+    ```
 
-## Environment Variables ##
+## Using secrets with your container ##
 
-This container supports no environment variables.
+This container also supports passing sensitive values via [Docker
+secrets](https://docs.docker.com/engine/swarm/secrets/).  Passing sensitive
+values like your credentials can be more secure using secrets than using
+environment variables.  See the
+[secrets](#secrets) section below for a table of all supported secret files.
+
+1. To use secrets, create a `database_creds.yml` file in [this
+   format](https://github.com/cisagov/mongo-db-from-config#usage):
+
+    ```yml
+    ---
+    version: '1'
+
+    database:
+      name: cyhy
+      uri: mongodb://readonly:the_password@cyhy.example.com:27017/cyhy
+
+    ```
+
+1. Then add the secret to your `docker-compose.yml` file:
+
+    ```yaml
+    ---
+    version: "3.7"
+
+    secrets:
+      database_creds:
+        file: database_creds.yml
+
+    services:
+      gatherer:
+        image: cisagov/gatherer:0.0.1
+        volumes:
+          - type: bind
+            source: <your_output_dir>
+            target: /home/cisa/shared
+        secrets:
+          - source: database_creds
+            target: database_creds.yml
+    ```
+
+## Updating your container ##
+
+### Docker Compose ###
+
+1. Pull the new image from Docker hub:
+
+    ```console
+    docker-compose pull
+    ```
+
+1. Recreate the running container by following the [previous instructions](#running-with-docker-compose):
+
+    ```console
+    docker-compose up --detach
+    ```
+
+### Docker ###
+
+1. Stop the running container:
+
+    ```console
+    docker stop <container_id>
+    ```
+
+1. Pull the new image:
+
+    ```console
+    docker pull cisagov/gatherer:0.0.1
+    ```
+
+1. Recreate and run the container by following the [previous instructions](#running-with-docker).
+
+## Image tags ##
+
+The images of this container are tagged with [semantic
+versions](https://semver.org) of the underlying gatherer project that they
+containerize.  It is recommended that most users use a version tag (e.g.
+`:0.0.1`).
+
+| Image:tag | Description |
+|-----------|-------------|
+|`cisagov/gatherer:1.2.3`| An exact release version. |
+|`cisagov/gatherer:1.2`| The most recent release matching the major and minor version numbers. |
+|`cisagov/gatherer:1`| The most recent release matching the major version number. |
+|`cisagov/gatherer:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
+|`cisagov/gatherer:nightly` | A nightly build of the `develop` branch of this repository. |
+|`cisagov/gatherer:latest`| The most recent release image pushed to a container registry.  Pulling an image using the `:latest` tag [should be avoided.](https://vsupalov.com/docker-latest-tag/) |
+
+See the [tags tab](https://hub.docker.com/r/cisagov/gatherer/tags) on Docker
+Hub for a list of all the supported tags.
+
+## Volumes ##
+
+| Mount point | Purpose        |
+|-------------|----------------|
+| /home/cisa/shared | Output |
+
+## Environment variables ##
+
+### Required ###
+
+There are no required environment variables.
+
+<!--
+| Name  | Purpose | Default |
+|-------|---------|---------|
+| `REQUIRED_VARIABLE` | Describe its purpose. | `null` |
+-->
+
+### Optional ###
+
+There are no optional environment variables.
+
+<!--
+| Name  | Purpose | Default |
+|-------|---------|---------|
+| `OPTIONAL_VARIABLE` | Describe its purpose. | `null` |
+-->
 
 ## Secrets ##
 
@@ -57,11 +186,47 @@ This container supports no environment variables.
 |---------------|----------------------|
 | database_creds.yml | Cyber Hygiene database credentials in [this format](https://github.com/cisagov/mongo-db-from-config#usage) |
 
-## Volumes ##
+## Building from source ##
 
-| Mount point | Purpose        |
-|-------------|----------------|
-| /home/cisa/shared | Output |
+Build the image locally using this git repository as the [build context](https://docs.docker.com/engine/reference/commandline/build/#git-repositories):
+
+```console
+docker build \
+  --build-arg VERSION=0.0.1 \
+  --tag cisagov/gatherer:0.0.1 \
+  https://github.com/cisagov/gatherer.git#develop
+```
+
+## Cross-platform builds ##
+
+To create images that are compatible with other platforms, you can use the
+[`buildx`](https://docs.docker.com/buildx/working-with-buildx/) feature of
+Docker:
+
+1. Copy the project to your machine using the `Code` button above
+   or the command line:
+
+    ```console
+    git clone https://github.com/cisagov/gatherer.git
+    cd gatherer
+    ```
+
+1. Create the `Dockerfile-x` file with `buildx` platform support:
+
+    ```console
+    ./buildx-dockerfile.sh
+    ```
+
+1. Build the image using `buildx`:
+
+    ```console
+    docker buildx build \
+      --file Dockerfile-x \
+      --platform linux/amd64 \
+      --build-arg VERSION=0.0.1 \
+      --output type=docker \
+      --tag cisagov/gatherer:0.0.1 .
+    ```
 
 ## Contributing ##
 
