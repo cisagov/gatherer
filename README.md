@@ -142,8 +142,8 @@ containerize.  It is recommended that most users use a version tag (e.g.
 
 | Image:tag | Description |
 |-----------|-------------|
-|`cisagov/gatherer:1.2.3`| An exact release version. |
-|`cisagov/gatherer:1.2`| The most recent release matching the major and minor version numbers. |
+|`cisagov/gatherer:1.4.2`| An exact release version. |
+|`cisagov/gatherer:1.4`| The most recent release matching the major and minor version numbers. |
 |`cisagov/gatherer:1`| The most recent release matching the major version number. |
 |`cisagov/gatherer:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
 |`cisagov/gatherer:nightly` | A nightly build of the `develop` branch of this repository. |
