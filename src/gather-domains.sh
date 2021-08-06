@@ -7,8 +7,7 @@ HOME_DIR=/home/cisa
 OUTPUT_DIR=$HOME_DIR/shared/artifacts
 
 # Create the output directory, if necessary
-if [ ! -d $OUTPUT_DIR ]
-then
+if [ ! -d $OUTPUT_DIR ]; then
   mkdir $OUTPUT_DIR
 fi
 
@@ -43,7 +42,7 @@ wget https://raw.githubusercontent.com/cisagov/scan-target-data/develop/current-
 tail -n +2 $OUTPUT_DIR/current-federal-non-dotgov.csv > \
   /tmp/current-federal-non-dotgov.csv
 cat $OUTPUT_DIR/current-federal.csv \
-  /tmp/current-federal-non-dotgov.csv  > \
+  /tmp/current-federal-non-dotgov.csv > \
   $OUTPUT_DIR/current-federal_modified.csv
 ###
 # Remove the FED.US domain.  This is really a top-level domain,
@@ -93,11 +92,11 @@ sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing O
 # lovesegfault/beautysh#82 to document this.
 #
 # @formatter:off
-TOP_LEVEL_DOMAINS=$(cut --delimiter=, --fields=1 $OUTPUT_DIR/current-federal_modified.csv | \
-  awk -F"." '{if (NR > 1) print "."$NF;}' | \
-  sort --ignore-case --unique | \
-  tr "[:upper:]" "[:lower:]" | \
-  paste --serial --delimiters=,)
+TOP_LEVEL_DOMAINS=$(cut --delimiter=, --fields=1 $OUTPUT_DIR/current-federal_modified.csv \
+  | awk -F"." '{if (NR > 1) print "."$NF;}' \
+  | sort --ignore-case --unique \
+  | tr "[:upper:]" "[:lower:]" \
+  | paste --serial --delimiters=,)
 # @formatter:on
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,other \
   --suffix="$TOP_LEVEL_DOMAINS" --ignore-www --include-parents \
@@ -114,7 +113,7 @@ cp results/gathered.csv gathered.csv
 cp results/gathered.csv $OUTPUT_DIR/gathered.csv
 
 # Remove extra columns
-cut -d"," -f1 gathered.csv  > scanme.csv
+cut -d"," -f1 gathered.csv > scanme.csv
 
 # Remove characters that might break parsing
 sed -i '/^ *$/d;/@/d;s/ //g;s/\"//g;s/'\''//g' scanme.csv
