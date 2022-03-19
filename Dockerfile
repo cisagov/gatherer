@@ -1,6 +1,6 @@
 ARG VERSION=unspecified
 
-FROM python:3.10.2-slim-bullseye
+FROM python:slim-bullseye
 
 ARG VERSION
 
