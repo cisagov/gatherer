@@ -159,7 +159,7 @@ environment variables.  See the
 
 The images of this container are tagged with [semantic
 versions](https://semver.org) of the underlying gatherer project that they
-containerize.  It is recommended that most users use a version tag (e.g.
+vvcontainerize.  It is recommended that most users use a version tag (e.g.
 `:1.5.5`).
 
 | Image:tag | Description |
