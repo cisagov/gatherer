@@ -20,6 +20,16 @@ services:
     image: cisagov/gatherer
     init: true
     restart: "no"
+<<<<<<< HEAD
+=======
+    environment:
+      - ECHO_MESSAGE=Hello World from docker compose!
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+>>>>>>> 9cea64da4a1379cdde3c509a09fc548f0da8b034
     secrets:
       - source: database_creds
         target: database_creds.yml

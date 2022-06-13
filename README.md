@@ -48,8 +48,19 @@ docker run cisagov/gatherer:1.5.5
         image: cisagov/gatherer:1.5.5
         volumes:
           - type: bind
+<<<<<<< HEAD
             source: <your_output_dir>
             target: /home/cisa/shared
+=======
+            source: <your_log_dir>
+            target: /var/log
+        environment:
+          - ECHO_MESSAGE="Hello from docker compose"
+        ports:
+          - target: 8080
+            published: 8080
+            protocol: tcp
+>>>>>>> 9cea64da4a1379cdde3c509a09fc548f0da8b034
     ```
 
 1. Start the container and detach:
@@ -94,8 +105,19 @@ environment variables.  See the
         image: cisagov/gatherer:1.5.5
         volumes:
           - type: bind
+<<<<<<< HEAD
             source: <your_output_dir>
             target: /home/cisa/shared
+=======
+            source: <your_log_dir>
+            target: /var/log
+        environment:
+          - ECHO_MESSAGE="Hello from docker compose"
+        ports:
+          - target: 8080
+            published: 8080
+            protocol: tcp
+>>>>>>> 9cea64da4a1379cdde3c509a09fc548f0da8b034
         secrets:
           - source: database_creds
             target: database_creds.yml
