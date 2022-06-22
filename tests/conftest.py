@@ -6,7 +6,6 @@ https://docs.pytest.org/en/latest/writing_plugins.html#conftest-py-plugins
 import pytest
 
 MAIN_SERVICE_NAME = "gatherer"
-VERSION_SERVICE_NAME = f"{MAIN_SERVICE_NAME}-version"
 
 
 @pytest.fixture(scope="session")
