@@ -39,11 +39,9 @@ wget https://raw.githubusercontent.com/cisagov/scan-target-data/develop/current-
 # Note that we drop the first (header) line of the non-.gov file
 # before the concatenation.
 ###
-tail -n +2 $OUTPUT_DIR/current-federal-non-dotgov.csv > \
-  /tmp/current-federal-non-dotgov.csv
+tail -n +2 $OUTPUT_DIR/current-federal-non-dotgov.csv > /tmp/current-federal-non-dotgov.csv
 cat $OUTPUT_DIR/current-federal.csv \
-  /tmp/current-federal-non-dotgov.csv > \
-  $OUTPUT_DIR/current-federal_modified.csv
+  /tmp/current-federal-non-dotgov.csv > $OUTPUT_DIR/current-federal_modified.csv
 ###
 # Remove the FED.US domain.  This is really a top-level domain,
 # analogous to .gov or .com.  It is only present in current-federal as
