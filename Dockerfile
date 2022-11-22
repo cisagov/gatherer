@@ -4,34 +4,44 @@ FROM python:3.11.0-slim-bullseye
 
 ARG VERSION
 
+###
 # For a list of pre-defined annotation keys and value types see:
 # https://github.com/opencontainers/image-spec/blob/master/annotations.md
+#
 # Note: Additional labels are added by the build workflow.
-LABEL org.opencontainers.image.authors="jeremy.frasier@cisa.dhs.gov"
+###
+# github@cisa.dhs.gov is a very generic email distribution, and it is
+# unlikely that anyone on that distribution is familiar with the
+# particulars of your repository.  It is therefore *strongly*
+# suggested that you use an email address here that is specific to the
+# person or group that maintains this repository; for example:
+# LABEL org.opencontainers.image.authors="vm-fusion-dev-group@trio.dhs.gov"
+LABEL org.opencontainers.image.authors="vm-fusion-dev-group@trio.dhs.gov"
 LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security Agency"
 
 ###
-# Setup the user and its home directory
+# Unprivileged user setup variables
 ###
-
-ARG CISA_GID=421
-ARG CISA_UID=${CISA_GID}
-ENV CISA_USER="cisa"
+ARG CISA_UID=421
+ARG CISA_GID=${CISA_UID}
+ARG CISA_USER="cisa"
 ENV CISA_GROUP=${CISA_USER}
-ENV CISA_HOME="/home/cisa"
+ENV CISA_HOME="/home/${CISA_USER}"
+
+###
+# Upgrade the system
+###
+RUN apt-get update --quiet --quiet \
+    && apt-get upgrade --quiet --quiet
 
 ###
 # Create unprivileged user
 ###
-RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP}
-RUN useradd --system --uid ${CISA_UID} --gid ${CISA_GROUP} --comment "${CISA_USER} user" ${CISA_USER}
+RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
+    && useradd --system --uid ${CISA_UID} --gid ${CISA_GROUP} --comment "${CISA_USER} user" ${CISA_USER}
 
 ###
 # Install everything we need
-###
-
-###
-# Dependencies
 #
 # We need redis-tools so we can use redis-cli to communicate with
 # redis.  wget is used inside of gather-domains.sh.
@@ -45,8 +55,6 @@ ENV DEPS \
     wget
 ENV INSTALL_DEPS \
     git
-RUN apt-get update --quiet --quiet
-RUN apt-get upgrade --quiet --quiet
 RUN apt-get install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
     $DEPS $INSTALL_DEPS
@@ -69,7 +77,11 @@ RUN pip install --no-cache-dir --upgrade \
     --requirement ${CISA_HOME}/domain-scan/requirements.txt
 
 ###
-# Install some dependencies for scripts/fed_hostnames.py
+# Install Python dependencies
+#
+# Note that we use pip --no-cache-dir to avoid writing to a local
+# cache.  This results in a smaller final image, at the cost of
+# slightly longer install times.
 ###
 RUN pip install --no-cache-dir --upgrade \
     docopt \
@@ -86,14 +98,13 @@ RUN apt-get remove --quiet --quiet $INSTALL_DEPS
 RUN apt-get --quiet --quiet clean
 RUN rm -rf /var/lib/apt/lists/*
 
-
 ###
 # Setup working directory and entrypoint
-###
-
+#
 # Put this just before we change users because the copy (and every
 # step after it) will always be rerun by docker, but we need to be
 # root for the chown command.
+###
 COPY src ${CISA_HOME}
 RUN chown -R ${CISA_USER}:${CISA_GROUP} ${CISA_HOME}
 
