@@ -77,7 +77,7 @@ RUN pip install --no-cache-dir --upgrade \
     --requirement ${CISA_HOME}/domain-scan/requirements.txt
 
 ###
-# Install Python dependencies
+# Install Python dependencies for scripts/fed_hostnames.py
 #
 # Note that we use pip --no-cache-dir to avoid writing to a local
 # cache.  This results in a smaller final image, at the cost of
