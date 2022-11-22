@@ -32,7 +32,7 @@ expects the secrets in a different location.
 To run the `cisagov/gatherer` image via Docker:
 
 ```console
-docker run cisagov/gatherer:1.5.8
+docker run cisagov/gatherer:1.5.9
 ```
 
 ### Running with Docker Compose ###
@@ -45,7 +45,7 @@ docker run cisagov/gatherer:1.5.8
 
     services:
       gatherer:
-        image: cisagov/gatherer:1.5.8
+        image: cisagov/gatherer:1.5.9
         volumes:
           - type: bind
             source: <your_output_dir>
@@ -91,7 +91,7 @@ environment variables.  See the
 
     services:
       gatherer:
-        image: cisagov/gatherer:1.5.8
+        image: cisagov/gatherer:1.5.9
         volumes:
           - type: bind
             source: <your_output_dir>
@@ -128,7 +128,7 @@ environment variables.  See the
 1. Pull the new image:
 
     ```console
-    docker pull cisagov/gatherer:1.5.8
+    docker pull cisagov/gatherer:1.5.9
     ```
 
 1. Recreate and run the container by following the [previous instructions](#running-with-docker).
@@ -138,11 +138,11 @@ environment variables.  See the
 The images of this container are tagged with [semantic
 versions](https://semver.org) of the underlying gatherer project that they
 containerize.  It is recommended that most users use a version tag (e.g.
-`:1.5.8`).
+`:1.5.9`).
 
 | Image:tag | Description |
 |-----------|-------------|
-|`cisagov/gatherer:1.5.8`| An exact release version. |
+|`cisagov/gatherer:1.5.9`| An exact release version. |
 |`cisagov/gatherer:1.5`| The most recent release matching the major and minor version numbers. |
 |`cisagov/gatherer:1`| The most recent release matching the major version number. |
 |`cisagov/gatherer:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
@@ -205,8 +205,8 @@ Build the image locally using this git repository as the [build context](https:/
 
 ```console
 docker build \
-  --build-arg VERSION=1.5.8 \
-  --tag cisagov/gatherer:1.5.8 \
+  --build-arg VERSION=1.5.9 \
+  --tag cisagov/gatherer:1.5.9 \
   https://github.com/cisagov/gatherer.git#develop
 ```
 
@@ -236,9 +236,9 @@ Docker:
     docker buildx build \
       --file Dockerfile-x \
       --platform linux/amd64 \
-      --build-arg VERSION=1.5.8 \
+      --build-arg VERSION=1.5.9 \
       --output type=docker \
-      --tag cisagov/gatherer:1.5.8 .
+      --tag cisagov/gatherer:1.5.9 .
     ```
 
 ## Contributing ##
