@@ -1,8 +1,4 @@
-ARG VERSION=unspecified
-
 FROM python:3.11.0-slim-bullseye
-
-ARG VERSION
 
 ###
 # For a list of pre-defined annotation keys and value types see:
