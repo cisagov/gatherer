@@ -61,7 +61,7 @@ RUN pip install --no-cache-dir --upgrade pip setuptools
 ###
 # Install domain-scan
 ###
-RUN git clone https://github.com/18F/domain-scan \
+RUN git clone https://github.com/cisagov/domain-scan \
     ${CISA_HOME}/domain-scan/
 RUN pip install --no-cache-dir --upgrade \
     --requirement ${CISA_HOME}/domain-scan/requirements.txt
