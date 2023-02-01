@@ -10,9 +10,11 @@
 [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/cisagov/gatherer)](https://hub.docker.com/r/cisagov/gatherer)
 [![Platforms](https://img.shields.io/badge/platforms-amd64%20%7C%20arm%2Fv6%20%7C%20arm%2Fv7%20%7C%20arm64%20%7C%20ppc64le%20%7C%20s390x-blue)](https://hub.docker.com/r/cisagov/gatherer/tags)
 
-This is a Docker container that uses
-[domain-scan](https://github.com/18F/domain-scan) to gather domains as
-a precursor to scanning by [pshtt](https://github.com/cisagov/pshtt),
+This is a Docker container that uses [the `cisagov`
+fork](https://github.com/cisagov/domain-scan) of 18F's
+[`domain-scan`](https://github.com/18F/domain-scan) to gather domains
+as a precursor to scanning by
+[pshtt](https://github.com/cisagov/pshtt),
 [trustymail](https://github.com/cisagov/trustymail), and
 [sslyze](https://github.com/nabla-c0d3/sslyze).
 
