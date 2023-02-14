@@ -50,13 +50,16 @@ RUN apt-get install --quiet --quiet --yes \
     $DEPS $INSTALL_DEPS
 
 ###
-# Make sure pip and setuptools are the latest versions
+# Make sure pip, setuptools, and wheel are the latest versions
 #
-# Note that we use pip --no-cache-dir to avoid writing to a local
+# Note that we use pip3 --no-cache-dir to avoid writing to a local
 # cache.  This results in a smaller final image, at the cost of
 # slightly longer install times.
 ###
-RUN pip install --no-cache-dir --upgrade pip setuptools
+RUN pip3 install --no-cache-dir --upgrade \
+    pip \
+    setuptools \
+    wheel
 
 ###
 # Install domain-scan
@@ -69,17 +72,17 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir ${CISA_HOME}/domain-scan \
     && curl --location https://github.com/cisagov/domain-scan/tarball/master \
     | tar --extract --gzip --strip-components 1 --directory ${CISA_HOME}/domain-scan/
-RUN pip install --no-cache-dir --upgrade \
+RUN pip3 install --no-cache-dir --upgrade \
     --requirement ${CISA_HOME}/domain-scan/requirements.txt
 
 ###
 # Install Python dependencies for scripts/fed_hostnames.py
 #
-# Note that we use pip --no-cache-dir to avoid writing to a local
+# Note that we use pip3 --no-cache-dir to avoid writing to a local
 # cache.  This results in a smaller final image, at the cost of
 # slightly longer install times.
 ###
-RUN pip install --no-cache-dir --upgrade \
+RUN pip3 install --no-cache-dir --upgrade \
     docopt \
     https://github.com/cisagov/mongo-db-from-config/tarball/develop
 
