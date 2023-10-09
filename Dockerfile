@@ -1,4 +1,4 @@
-FROM python:3.11.5-slim-bullseye
+FROM python:3.12.0-slim-bullseye
 
 ###
 # For a list of pre-defined annotation keys and value types see:
