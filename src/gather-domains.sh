@@ -85,17 +85,11 @@ sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing O
 # of these top-level domains is automatically extracted into the
 # TOP_LEVEL_DOMAINS variable.
 ###
-# beautysh doesn't handle this multiline $() correctly, so we have to
-# temporarily turn off the formatting.  I created
-# lovesegfault/beautysh#82 to document this.
-#
-# @formatter:off
 TOP_LEVEL_DOMAINS=$(cut --delimiter=, --fields=1 $OUTPUT_DIR/current-federal_modified.csv \
   | awk -F"." '{if (NR > 1) print "."$NF;}' \
   | sort --ignore-case --unique \
   | tr "[:upper:]" "[:lower:]" \
   | paste --serial --delimiters=,)
-# @formatter:on
 $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,rapid,eot_2012,eot_2016,cyhy,other \
   --suffix="$TOP_LEVEL_DOMAINS" --ignore-www --include-parents \
   --parents=$OUTPUT_DIR/current-federal_modified.csv \
