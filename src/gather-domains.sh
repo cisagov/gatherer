@@ -47,7 +47,7 @@ cat $OUTPUT_DIR/current-federal.csv \
 # analogous to .gov or .com.  It is only present in current-federal as
 # an accident of the way the registrar treats it.
 ###
-sed -i '/^FED\.US,.*/d' $OUTPUT_DIR/current-federal_modified.csv
+sed -i '/^fed\.us,.*/d' $OUTPUT_DIR/current-federal_modified.csv
 ###
 # Remove all domains that belong to US Courts, since they are part of
 # the judicial branch and have asked us to stop scanning them.
