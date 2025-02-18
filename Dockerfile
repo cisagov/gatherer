@@ -75,12 +75,6 @@ ENV CISA_HOME="/home/${CISA_USER}"
 ENV VIRTUAL_ENV="${CISA_HOME}/.venv"
 
 ###
-# Upgrade the system
-###
-RUN apt-get update --quiet --quiet \
-    && apt-get upgrade --quiet --quiet
-
-###
 # Create unprivileged user
 ###
 RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
@@ -101,7 +95,8 @@ ENV DEPS \
     wget
 ENV INSTALL_DEPS \
     curl
-RUN apt-get install --quiet --quiet --yes \
+RUN apt-get update --quiet --quiet \
+    && apt-get install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
     $DEPS $INSTALL_DEPS
 
