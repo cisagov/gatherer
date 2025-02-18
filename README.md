@@ -43,7 +43,7 @@ docker run cisagov/gatherer:1.5.18
 
     ```yaml
     ---
-    name: skeleton-docker
+    name: gatherer
 
     services:
       gatherer:
@@ -85,7 +85,7 @@ environment variables.  See the
 
     ```yaml
     ---
-    name: skeleton-docker
+    name: gatherer
 
     secrets:
       database_creds:
