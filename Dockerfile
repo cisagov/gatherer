@@ -101,18 +101,6 @@ RUN apt-get update --quiet --quiet \
     $DEPS $INSTALL_DEPS
 
 ###
-# Make sure pip, setuptools, and wheel are the latest versions
-#
-# Note that we use pip3 --no-cache-dir to avoid writing to a local
-# cache.  This results in a smaller final image, at the cost of
-# slightly longer install times.
-###
-RUN pip3 install --no-cache-dir --upgrade \
-    pip \
-    setuptools \
-    wheel
-
-###
 # Install domain-scan
 #
 # The SHELL command is used to ensure that if either the curl call or
