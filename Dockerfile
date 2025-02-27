@@ -3,6 +3,11 @@
 FROM docker.io/library/python:3.12.3-slim-bookworm AS compile-stage
 
 ###
+# Multi-platform build variables
+###
+ARG TARGETARCH
+
+###
 # Unprivileged user variables
 ###
 ARG CISA_USER="cisa"
@@ -65,6 +70,11 @@ LABEL org.opencontainers.image.authors="vm-dev@gwe.cisa.dhs.gov"
 LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security Agency"
 
 ###
+# Multi-platform build variables
+###
+ARG TARGETARCH
+
+###
 # Unprivileged user setup variables
 ###
 ARG CISA_UID=421
@@ -86,14 +96,12 @@ RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
 # We need redis-tools so we can use redis-cli to communicate with
 # redis.  wget is used inside of gather-domains.sh.
 ###
-ENV DEPS \
-    bash \
-    redis-tools \
-    wget
 RUN apt-get update --quiet --quiet \
     && apt-get install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-    $DEPS \
+        bash=5.2.15-2+b7 \
+        redis-tools=5:7.0.15-1~deb12u3 \
+        wget=1.21.3-1+b$(if [ "$TARGETARCH" = "amd64" ]; then echo "2"; else echo "1"; fi) \
     && apt-get --quiet --quiet clean \
     && rm --recursive --force /var/lib/apt/lists/*
 
