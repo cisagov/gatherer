@@ -85,20 +85,17 @@ RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
 #
 # We need redis-tools so we can use redis-cli to communicate with
 # redis.  wget is used inside of gather-domains.sh.
-#
-# Install dependencies are only needed for software installation and
-# will be removed at the end of the build process.
 ###
 ENV DEPS \
     bash \
     redis-tools \
     wget
-ENV INSTALL_DEPS \
-    curl
 RUN apt-get update --quiet --quiet \
     && apt-get install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-    $DEPS $INSTALL_DEPS
+    $DEPS \
+    && apt-get --quiet --quiet clean \
+    && rm --recursive --force /var/lib/apt/lists/*
 
 ###
 # Install domain-scan
@@ -109,20 +106,8 @@ RUN apt-get update --quiet --quiet \
 ###
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir ${CISA_HOME}/domain-scan \
-    && curl --location https://github.com/cisagov/domain-scan/tarball/master \
+    && wget --relative --output-document - https://github.com/cisagov/domain-scan/tarball/master \
     | tar --extract --gzip --strip-components 1 --directory ${CISA_HOME}/domain-scan/
-
-
-###
-# Remove install dependencies
-###
-RUN apt-get remove --quiet --quiet $INSTALL_DEPS
-
-###
-# Clean up aptitude cruft
-###
-RUN apt-get --quiet --quiet clean \
-    && rm --recursive --force /var/lib/apt/lists/*
 
 # Copy in the Python virtual environment created in compile-stage, symlink the
 # Python binary in the venv to the system-wide Python, and add the venv to the PATH.
