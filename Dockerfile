@@ -111,19 +111,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir ${CISA_HOME}/domain-scan \
     && curl --location https://github.com/cisagov/domain-scan/tarball/master \
     | tar --extract --gzip --strip-components 1 --directory ${CISA_HOME}/domain-scan/
-RUN pip3 install --no-cache-dir --upgrade \
-    --requirement ${CISA_HOME}/domain-scan/requirements.txt
 
-###
-# Install Python dependencies for scripts/fed_hostnames.py
-#
-# Note that we use pip3 --no-cache-dir to avoid writing to a local
-# cache.  This results in a smaller final image, at the cost of
-# slightly longer install times.
-###
-RUN pip3 install --no-cache-dir --upgrade \
-    docopt \
-    https://github.com/cisagov/mongo-db-from-config/tarball/develop
 
 ###
 # Remove install dependencies
