@@ -155,8 +155,7 @@ ENV PATH="${VIRTUAL_ENV}/bin:$PATH"
 # step after it) will always be rerun by docker, but we need to be
 # root for the chown command.
 ###
-COPY src ${CISA_HOME}
-RUN chown --recursive ${CISA_USER}:${CISA_GROUP} ${CISA_HOME}
+COPY --chown=${CISA_USER}:${CISA_GROUP} src ${CISA_HOME}
 
 ###
 # Prepare to run
