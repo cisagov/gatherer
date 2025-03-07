@@ -7,23 +7,34 @@
 name: CodeQL
 
 on:
+  merge_group:
+    types:
+      - checks_requested
+  pull_request:
+    # The branches here must be a subset of the ones in the push key
+    branches:
+      - develop
   push:
     # Dependabot triggered push events have read-only access, but uploading code
     # scanning requires write access.
     branches-ignore:
       - dependabot/**
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches:
-      - develop
   schedule:
     - cron: '0 21 * * 6'
 
 jobs:
   diagnostics:
     name: Run diagnostics
+    # This job does not need any permissions
+    permissions: {}
     runs-on: ubuntu-latest
     steps:
+      # Note that a duplicate of this step must be added at the top of
+      # each job.
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+        with:
+          # Uses the organization variable unless overridden
+          config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       # Note that a duplicate of this step must be added at the top of
       # each job.
       - id: harden-runner
@@ -33,7 +44,7 @@ jobs:
           egress-policy: audit
       - id: github-status
         name: Check GitHub status
-        uses: crazy-max/ghaction-github-status@v3
+        uses: crazy-max/ghaction-github-status@v4
       - id: dump-context
         name: Dump context
         uses: crazy-max/ghaction-dump-context@v2
@@ -43,6 +54,8 @@ jobs:
       - diagnostics
     runs-on: ubuntu-latest
     permissions:
+      # actions/checkout needs this to fetch code
+      contents: read
       # required for all workflows
       security-events: write
     strategy:
@@ -56,6 +69,10 @@ jobs:
         # https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#overriding-automatic-language-detection
 
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+        with:
+          # Uses the organization variable unless overridden
+          config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - id: harden-runner
         name: Harden the runner
         uses: step-security/harden-runner@v2
@@ -67,7 +84,7 @@ jobs:
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
 
@@ -75,7 +92,7 @@ jobs:
       # Java). If this step fails, then you should remove it and run the build
       # manually (see below).
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@v3
 
       # ℹ️ Command-line programs to run using the OS shell.
       # 📚 https://git.io/JvXDl
@@ -89,4 +106,4 @@ jobs:
       #     make release
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3

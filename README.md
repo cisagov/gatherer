@@ -39,19 +39,19 @@ docker run cisagov/gatherer:1.5.18
 
 ### Running with Docker Compose ###
 
-1. Create a `docker-compose.yml` file similar to the one below to use [Docker Compose](https://docs.docker.com/compose/).
+1. Create a `compose.yml` file similar to the one below to use [Docker Compose](https://docs.docker.com/compose/).
 
     ```yaml
     ---
-    version: "3.7"
+    name: gatherer
 
     services:
       gatherer:
         image: cisagov/gatherer:1.5.18
         volumes:
-          - type: bind
-            source: <your_output_dir>
+          - source: <your_output_dir>
             target: /home/cisa/shared
+            type: bind
     ```
 
 1. Start the container and detach:
@@ -81,11 +81,11 @@ environment variables.  See the
 
     ```
 
-1. Then add the secret to your `docker-compose.yml` file:
+1. Then add the secret to your `compose.yml` file:
 
     ```yaml
     ---
-    version: "3.7"
+    name: gatherer
 
     secrets:
       database_creds:
@@ -94,13 +94,13 @@ environment variables.  See the
     services:
       gatherer:
         image: cisagov/gatherer:1.5.18
-        volumes:
-          - type: bind
-            source: <your_output_dir>
-            target: /home/cisa/shared
         secrets:
           - source: database_creds
             target: database_creds.yml
+        volumes:
+          - source: <your_output_dir>
+            target: /home/cisa/shared
+            type: bind
     ```
 
 ## Updating your container ##
@@ -134,6 +134,35 @@ environment variables.  See the
     ```
 
 1. Recreate and run the container by following the [previous instructions](#running-with-docker).
+
+## Updating Python dependencies ##
+
+This image uses [Pipenv] to manage Python dependencies using a [Pipfile](https://github.com/pypa/pipfile).
+Both updating dependencies and changing the [Pipenv] configuration in `src/Pipfile`
+will result in a modified `src/Pipfile.lock` file that should be committed to the
+repository.
+
+> [!WARNING]
+> The `src/Pipfile.lock` as generated will fail `pre-commit` checks due to JSON formatting.
+
+### Updating dependencies ###
+
+If you want to update existing dependencies you would run the following command
+in the `src/` subdirectory:
+
+```console
+pipenv lock
+```
+
+### Modifying dependencies ###
+
+If you want to add or remove dependencies you would update the `src/Pipfile` file
+and then update dependencies as you would above.
+
+> [!NOTE]
+> You should only specify packages that are direct requirements of
+> your Docker configuration. Allow [Pipenv] to manage the dependencies
+> of the specified packages.
 
 ## Image tags ##
 
@@ -207,7 +236,6 @@ Build the image locally using this git repository as the [build context](https:/
 
 ```console
 docker build \
-  --build-arg VERSION=1.5.18 \
   --tag cisagov/gatherer:1.5.18 \
   https://github.com/cisagov/gatherer.git#develop
 ```
@@ -238,7 +266,6 @@ Docker:
     docker buildx build \
       --file Dockerfile-x \
       --platform linux/amd64 \
-      --build-arg VERSION=1.5.18 \
       --output type=docker \
       --tag cisagov/gatherer:1.5.18 .
     ```
@@ -260,3 +287,5 @@ dedication](https://creativecommons.org/publicdomain/zero/1.0/).
 All contributions to this project will be released under the CC0
 dedication. By submitting a pull request, you are agreeing to comply
 with this waiver of copyright interest.
+
+[Pipenv]: https://pypi.org/project/pipenv/
