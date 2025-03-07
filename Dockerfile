@@ -142,7 +142,5 @@ COPY --chown=${CISA_USER}:${CISA_GROUP} src ${CISA_HOME}
 # Prepare to run
 ###
 WORKDIR ${CISA_HOME}
-# Right now we need to be root at runtime in order to create files in
-# ${CISA_HOME}/shared
-# USER ${CISA_USER}:${CISA_GROUP}
+USER ${CISA_USER}:${CISA_GROUP}
 ENTRYPOINT ["./gather-domains.sh"]
