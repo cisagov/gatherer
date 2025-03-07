@@ -77,7 +77,7 @@ ARG TARGETARCH
 ###
 # Unprivileged user setup variables
 ###
-ARG CISA_UID=421
+ARG CISA_UID=2048
 ARG CISA_GID=${CISA_UID}
 ARG CISA_USER="cisa"
 ENV CISA_GROUP=${CISA_USER}
