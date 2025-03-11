@@ -22,7 +22,7 @@ This Docker container is intended to be run via
 [orchestrator](https://github.com/cisagov/orchestrator).
 
 **N.B.:** The secrets in the `src/secrets` directory are only used
-when testing via the `docker-compose.yml` composition.  Normally this
+when testing via the `compose.yml` composition.  Normally this
 Docker container is run via the Docker composition in
 [cisagov/orchestrator](https://github.com/cisagov/orchestrator), which
 expects the secrets in a different location.
@@ -199,7 +199,7 @@ There are no ports exposed by this container.
 <!-- |------|----------------| -->
 <!-- | 8080 | Example only; nothing is actually listening on the port | -->
 
-<!-- The sample [Docker composition](docker-compose.yml) publishes the -->
+<!-- The sample [Docker composition](compose.yml) publishes the -->
 <!-- exposed port at 8080. -->
 
 ## Environment variables ##
