@@ -54,7 +54,8 @@ jobs:
                       "linux/arm/v7",
                       "linux/arm64",
                       "linux/ppc64le",
-                      "linux/riscv64",
+                      # The base image does not support riscv64 at this time.
+                      # "linux/riscv64",
                       "linux/s390x",
                   ],
               },
