@@ -433,7 +433,7 @@ jobs:
           # https://github.com/opencontainers/image-spec/blob/master/annotations.md
       - if: ${{ github.ref_name == 'develop' && github.event_name == 'push' }}
         name: Update the Docker Hub description
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         with:
           password: ${{ secrets.DOCKER_PASSWORD }}
           readme-filepath: README.md
