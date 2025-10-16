@@ -1,7 +1,7 @@
 ---
 name: build
 
-on:
+on:  # yamllint disable-line rule:truthy
   merge_group:
     types:
       - checks_requested
@@ -10,22 +10,22 @@ on:
     branches:
       - "**"
     tags:
-      - "v*.*.*"
+      - v*.*.*
   repository_dispatch:
     # Respond to rebuild requests. See: https://github.com/cisagov/action-apb/
     types:
       - apb
   schedule:
-    - cron: "0 10 * * *"  # everyday at 10am
+    - cron: 0 10 * * *  # everyday at 10am
   workflow_dispatch:
     inputs:
       image-tag:
-        default: "dispatch"
-        description: "Tag to apply to pushed images"
+        default: dispatch
+        description: Tag to apply to pushed images
         required: true
       remote-shell:
         default: "false"
-        description: "Debug with remote shell"
+        description: Debug with remote shell
         required: true
 
 # Set a default shell for any run steps. The `-Eueo pipefail` sets errtrace,
@@ -37,8 +37,6 @@ defaults:
     shell: bash -Eueo pipefail -x {0}
 
 env:
-  BUILDX_CACHE_DIR: ~/.cache/buildx
-  IMAGE_NAME: cisagov/gatherer
   PIP_CACHE_DIR: ~/.cache/pip
   PRE_COMMIT_CACHE_DIR: ~/.cache/pre-commit
   RUN_TMATE: ${{ secrets.RUN_TMATE }}
@@ -55,23 +53,34 @@ jobs:
     steps:
       # Note that a duplicate of this step must be added at the top of
       # each job.
-      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+      - name: Apply standard cisagov job preamble
+        uses: cisagov/action-job-preamble@v1
         with:
-          # Uses the organization variable unless overridden
-          config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
-      # Note that a duplicate of this step must be added at the top of
-      # each job.
-      - id: harden-runner
-        name: Harden the runner
-        uses: step-security/harden-runner@v2
-        with:
-          egress-policy: audit
-      - id: github-status
-        name: Check GitHub status
-        uses: crazy-max/ghaction-github-status@v4
-      - id: dump-context
-        name: Dump context
-        uses: crazy-max/ghaction-dump-context@v2
+          check_github_status: "true"
+          # This functionality is poorly implemented and has been
+          # causing problems due to the MITM implementation hogging or
+          # leaking memory.  As a result we disable it by default.  If
+          # you want to temporarily enable it, simply set
+          # monitor_permissions equal to "true".
+          #
+          # TODO: Re-enable this functionality when practical.  See
+          # cisagov/skeleton-generic#207 for more details.
+          monitor_permissions: "false"
+          output_workflow_context: "true"
+          # Use a variable to specify the permissions monitoring
+          # configuration. By default this will yield the
+          # configuration stored in the cisagov organization-level
+          # variable, but if you want to use a different configuration
+          # then simply:
+          # 1. Create a repository-level variable with the name
+          # ACTIONS_PERMISSIONS_CONFIG.
+          # 2. Set this new variable's value to the configuration you
+          # want to use for this repository.
+          #
+          # Note in particular that changing the permissions
+          # monitoring configuration *does not* require you to modify
+          # this workflow.
+          permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
   lint:
     # Checks out the source and runs pre-commit hooks.  Detects coding errors
     # and style deviations.
@@ -83,26 +92,43 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     steps:
-      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+      - name: Apply standard cisagov job preamble
+        uses: cisagov/action-job-preamble@v1
         with:
-          # Uses the organization variable unless overridden
-          config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
-      - id: harden-runner
-        name: Harden the runner
-        uses: step-security/harden-runner@v2
-        with:
-          egress-policy: audit
+          # This functionality is poorly implemented and has been
+          # causing problems due to the MITM implementation hogging or
+          # leaking memory.  As a result we disable it by default.  If
+          # you want to temporarily enable it, simply set
+          # monitor_permissions equal to "true".
+          #
+          # TODO: Re-enable this functionality when practical.  See
+          # cisagov/skeleton-generic#207 for more details.
+          monitor_permissions: "false"
+          # Use a variable to specify the permissions monitoring
+          # configuration. By default this will yield the
+          # configuration stored in the cisagov organization-level
+          # variable, but if you want to use a different configuration
+          # then simply:
+          # 1. Create a repository-level variable with the name
+          # ACTIONS_PERMISSIONS_CONFIG.
+          # 2. Set this new variable's value to the configuration you
+          # want to use for this repository.
+          #
+          # Note in particular that changing the permissions
+          # monitoring configuration *does not* require you to modify
+          # this workflow.
+          permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - id: setup-env
-        uses: cisagov/setup-env-github-action@develop
-      - uses: actions/checkout@v4
+        uses: cisagov/setup-env-github-action@v1
+      - uses: actions/checkout@v5
       - id: setup-python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ steps.setup-env.outputs.python-version }}
       # We need the Go version and Go cache location for the actions/cache step,
       # so the Go installation must happen before that.
       - id: setup-go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           # There is no expectation for actual Go code so we disable caching as
           # it relies on the existence of a go.sum file.
@@ -114,16 +140,16 @@ jobs:
           echo "dir=$(go env GOCACHE)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v4
         env:
-          BASE_CACHE_KEY: "${{ github.job }}-${{ runner.os }}-\
+          BASE_CACHE_KEY: ${{ github.job }}-${{ runner.os }}-\
             py${{ steps.setup-python.outputs.python-version }}-\
             go${{ steps.setup-go.outputs.go-version }}-\
             packer${{ steps.setup-env.outputs.packer-version }}-\
-            tf${{ steps.setup-env.outputs.terraform-version }}-"
+            tf${{ steps.setup-env.outputs.terraform-version }}-
         with:
-          key: "${{ env.BASE_CACHE_KEY }}\
+          key: ${{ env.BASE_CACHE_KEY }}\
             ${{ hashFiles('**/requirements-test.txt') }}-\
             ${{ hashFiles('**/requirements.txt') }}-\
-            ${{ hashFiles('**/.pre-commit-config.yaml') }}"
+            ${{ hashFiles('**/.pre-commit-config.yaml') }}
           # Note that the .terraform directory IS NOT included in the
           # cache because if we were caching, then we would need to use
           # the `-upgrade=true` option. This option blindly pulls down the
@@ -190,11 +216,20 @@ jobs:
       - name: Setup tmate debug session
         uses: mxschmitt/action-tmate@v3
         if: env.RUN_TMATE
+  repo-metadata:
+    name: Gather repository metadata
+    needs:
+      - diagnostics
+    permissions:
+      # actions/checkout needs this to fetch code
+      contents: read
+    uses: ./.github/workflows/_repo-metadata.yml
   prepare:
     # Generate Docker image metadata using the docker/metadata-action GitHub Action.
     name: Prepare build variables
     needs:
       - diagnostics
+      - repo-metadata
     outputs:
       labels: ${{ steps.generate-metadata.outputs.labels }}
       tags: ${{ steps.generate-metadata.outputs.tags }}
@@ -203,23 +238,40 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     steps:
-      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+      - name: Apply standard cisagov job preamble
+        uses: cisagov/action-job-preamble@v1
         with:
-          # Uses the organization variable unless overridden
-          config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
-      - id: harden-runner
-        name: Harden the runner
-        uses: step-security/harden-runner@v2
-        with:
-          egress-policy: audit
-      - uses: actions/checkout@v4
+          # This functionality is poorly implemented and has been
+          # causing problems due to the MITM implementation hogging or
+          # leaking memory.  As a result we disable it by default.  If
+          # you want to temporarily enable it, simply set
+          # monitor_permissions equal to "true".
+          #
+          # TODO: Re-enable this functionality when practical.  See
+          # cisagov/skeleton-docker#224 for more details.
+          monitor_permissions: "false"
+          # Use a variable to specify the permissions monitoring
+          # configuration. By default this will yield the
+          # configuration stored in the cisagov organization-level
+          # variable, but if you want to use a different configuration
+          # then simply:
+          # 1. Create a repository-level variable with the name
+          # ACTIONS_PERMISSIONS_CONFIG.
+          # 2. Set this new variable's value to the configuration you
+          # want to use for this repository.
+          #
+          # Note in particular that changing the permissions
+          # monitoring configuration *does not* require you to modify
+          # this workflow.
+          permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
+      - uses: actions/checkout@v5
       - id: generate-metadata
         name: Generate Docker image metadata
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.IMAGE_NAME }}
-            ghcr.io/${{ env.IMAGE_NAME }}
+            ${{ needs.repo-metadata.outputs.image-name }}
+            ghcr.io/${{ needs.repo-metadata.outputs.image-name }}
           tags: |
             type=edge
             type=raw,event=workflow_dispatch,value=${{ github.event.inputs.image-tag }}
@@ -240,42 +292,58 @@ jobs:
     name: Build test image
     needs:
       - diagnostics
+      - repo-metadata
       - prepare
     permissions:
       # actions/checkout needs this to fetch code
       contents: read
     runs-on: ubuntu-latest
     steps:
-      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+      - name: Apply standard cisagov job preamble
+        uses: cisagov/action-job-preamble@v1
         with:
-          # Uses the organization variable unless overridden
-          config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
-      - id: harden-runner
-        name: Harden the runner
-        uses: step-security/harden-runner@v2
-        with:
-          egress-policy: audit
+          # This functionality is poorly implemented and has been
+          # causing problems due to the MITM implementation hogging or
+          # leaking memory.  As a result we disable it by default.  If
+          # you want to temporarily enable it, simply set
+          # monitor_permissions equal to "true".
+          #
+          # TODO: Re-enable this functionality when practical.  See
+          # cisagov/skeleton-docker#224 for more details.
+          monitor_permissions: "false"
+          # Use a variable to specify the permissions monitoring
+          # configuration. By default this will yield the
+          # configuration stored in the cisagov organization-level
+          # variable, but if you want to use a different configuration
+          # then simply:
+          # 1. Create a repository-level variable with the name
+          # ACTIONS_PERMISSIONS_CONFIG.
+          # 2. Set this new variable's value to the configuration you
+          # want to use for this repository.
+          #
+          # Note in particular that changing the permissions
+          # monitoring configuration *does not* require you to modify
+          # this workflow.
+          permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        env:
-          BASE_CACHE_KEY: buildx-${{ runner.os }}-
-        with:
-          key: ${{ env.BASE_CACHE_KEY }}${{ github.sha }}
-          path: ${{ env.BUILDX_CACHE_DIR }}
-          restore-keys: |
-            ${{ env.BASE_CACHE_KEY }}
       - name: Create dist directory
         run: mkdir -p dist
       - name: Build image
         id: docker_build
         uses: docker/build-push-action@v6
         with:
-          cache-from: type=local,src=${{ env.BUILDX_CACHE_DIR }}
-          cache-to: type=local,dest=${{ env.BUILDX_CACHE_DIR }}
+          cache-from: type=gha
+          # We use the max mode to cache all layers which includes ones from
+          # intermediate steps. This will provide us the potential for more cache hits
+          # and thus better build times. It is also the suggested setting per the
+          # documentation:
+          # https://docs.docker.com/build/ci/github-actions/cache/#cache-backend-api
+          cache-to: type=gha,mode=max
+          # For a list of pre-defined annotation keys and value types see:
+          # https://github.com/opencontainers/image-spec/blob/master/annotations.md
           labels: ${{ needs.prepare.outputs.labels }}
           outputs: type=docker,dest=dist/image.tar
           # Uncomment the following option if you are building an image for use
@@ -283,9 +351,7 @@ jobs:
           # is unable to run on either. Please see the following issue for more
           # information: https://github.com/docker/buildx/issues/1533
           # provenance: false
-          tags: ${{ env.IMAGE_NAME }}:latest  # not to be pushed
-          # For a list of pre-defined annotation keys and value types see:
-          # https://github.com/opencontainers/image-spec/blob/master/annotations.md
+          tags: ${{ needs.repo-metadata.outputs.image-name }}:latest  # not to be pushed
       - name: Compress image
         run: gzip dist/image.tar
       - name: Upload artifacts
@@ -296,6 +362,54 @@ jobs:
       - name: Setup tmate debug session
         uses: mxschmitt/action-tmate@v3
         if: env.RUN_TMATE
+  scan:
+    name: Scan the image for vulnerabilities
+    needs:
+      - diagnostics
+      - repo-metadata
+      - build
+    permissions:
+      # actions/checkout needs this to fetch code
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply standard cisagov job preamble
+        uses: cisagov/action-job-preamble@v1
+        with:
+          # This functionality is poorly implemented and has been
+          # causing problems due to the MITM implementation hogging or
+          # leaking memory.  As a result we disable it by default.  If
+          # you want to temporarily enable it, simply set
+          # monitor_permissions equal to "true".
+          #
+          # TODO: Re-enable this functionality when practical.  See
+          # cisagov/skeleton-docker#224 for more details.
+          monitor_permissions: "false"
+          # Use a variable to specify the permissions monitoring
+          # configuration. By default this will yield the
+          # configuration stored in the cisagov organization-level
+          # variable, but if you want to use a different configuration
+          # then simply:
+          # 1. Create a repository-level variable with the name
+          # ACTIONS_PERMISSIONS_CONFIG.
+          # 2. Set this new variable's value to the configuration you
+          # want to use for this repository.
+          #
+          # Note in particular that changing the permissions
+          # monitoring configuration *does not* require you to modify
+          # this workflow.
+          permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: dist
+          path: dist
+      - name: Load Docker image
+        run: docker load < dist/image.tar.gz
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ needs.repo-metadata.outputs.image-name }}:latest
   test:
     # Executes tests on the single-platform image created in the "build" job.
     name: Test image
@@ -307,31 +421,48 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     steps:
-      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+      - name: Apply standard cisagov job preamble
+        uses: cisagov/action-job-preamble@v1
         with:
-          # Uses the organization variable unless overridden
-          config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
-      - id: harden-runner
-        name: Harden the runner
-        uses: step-security/harden-runner@v2
-        with:
-          egress-policy: audit
+          # This functionality is poorly implemented and has been
+          # causing problems due to the MITM implementation hogging or
+          # leaking memory.  As a result we disable it by default.  If
+          # you want to temporarily enable it, simply set
+          # monitor_permissions equal to "true".
+          #
+          # TODO: Re-enable this functionality when practical.  See
+          # cisagov/skeleton-docker#224 for more details.
+          monitor_permissions: "false"
+          # Use a variable to specify the permissions monitoring
+          # configuration. By default this will yield the
+          # configuration stored in the cisagov organization-level
+          # variable, but if you want to use a different configuration
+          # then simply:
+          # 1. Create a repository-level variable with the name
+          # ACTIONS_PERMISSIONS_CONFIG.
+          # 2. Set this new variable's value to the configuration you
+          # want to use for this repository.
+          #
+          # Note in particular that changing the permissions
+          # monitoring configuration *does not* require you to modify
+          # this workflow.
+          permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - id: setup-env
-        uses: cisagov/setup-env-github-action@develop
-      - uses: actions/checkout@v4
+        uses: cisagov/setup-env-github-action@v1
+      - uses: actions/checkout@v5
       - id: setup-python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ steps.setup-env.outputs.python-version }}
       - name: Cache testing environments
         uses: actions/cache@v4
         env:
-          BASE_CACHE_KEY: "${{ github.job }}-${{ runner.os }}-\
-            py${{ steps.setup-python.outputs.python-version }}-"
+          BASE_CACHE_KEY: ${{ github.job }}-${{ runner.os }}-\
+            py${{ steps.setup-python.outputs.python-version }}-
         with:
-          key: "${{ env.BASE_CACHE_KEY }}\
+          key: ${{ env.BASE_CACHE_KEY }}\
             ${{ hashFiles('**/requirements-test.txt') }}-\
-            ${{ hashFiles('**/requirements.txt') }}"
+            ${{ hashFiles('**/requirements.txt') }}
           path: ${{ env.PIP_CACHE_DIR }}
           restore-keys: |
             ${{ env.BASE_CACHE_KEY }}
@@ -339,12 +470,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install --upgrade --requirement requirements-test.txt
-      - name: Download docker image artifact
-        uses: actions/download-artifact@v4
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v5
         with:
           name: dist
           path: dist
-      - name: Load docker image
+      - name: Load Docker image
         run: docker load < dist/image.tar.gz
       - name: Run tests
         env:
@@ -365,7 +496,9 @@ jobs:
     needs:
       - diagnostics
       - lint
+      - repo-metadata
       - prepare
+      - scan
       - test
     permissions:
       # actions/checkout needs this to fetch code
@@ -375,15 +508,32 @@ jobs:
       packages: write
     runs-on: ubuntu-latest
     steps:
-      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+      - name: Apply standard cisagov job preamble
+        uses: cisagov/action-job-preamble@v1
         with:
-          # Uses the organization variable unless overridden
-          config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
-      - id: harden-runner
-        name: Harden the runner
-        uses: step-security/harden-runner@v2
-        with:
-          egress-policy: audit
+          # This functionality is poorly implemented and has been
+          # causing problems due to the MITM implementation hogging or
+          # leaking memory.  As a result we disable it by default.  If
+          # you want to temporarily enable it, simply set
+          # monitor_permissions equal to "true".
+          #
+          # TODO: Re-enable this functionality when practical.  See
+          # cisagov/skeleton-docker#224 for more details.
+          monitor_permissions: "false"
+          # Use a variable to specify the permissions monitoring
+          # configuration. By default this will yield the
+          # configuration stored in the cisagov organization-level
+          # variable, but if you want to use a different configuration
+          # then simply:
+          # 1. Create a repository-level variable with the name
+          # ACTIONS_PERMISSIONS_CONFIG.
+          # 2. Set this new variable's value to the configuration you
+          # want to use for this repository.
+          #
+          # Note in particular that changing the permissions
+          # monitoring configuration *does not* require you to modify
+          # this workflow.
+          permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -399,29 +549,54 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        env:
-          BASE_CACHE_KEY: buildx-${{ runner.os }}-
-        with:
-          key: ${{ env.BASE_CACHE_KEY }}${{ github.sha }}
-          path: ${{ env.BUILDX_CACHE_DIR }}
-          restore-keys: |
-            ${{ env.BASE_CACHE_KEY }}
-      - name: Build and push platform images to registries
+      # We only build to ensure that the image layers are cached to push later. This is
+      # because if the build takes over 10 minutes the token acquired to push to the
+      # GitHub Container Registry will have expired. This results in errors like:
+      #
+      # <AuthenticationErrorDetail>Signature not valid in the specified time frame:
+      # Start [Tue, 08 Jul 2025 06:05:02 GMT] - Expiry [Tue, 08 Jul 2025 06:15:07 GMT]
+      # - Current [Tue, 08 Jul 2025 06:16:10 GMT]</AuthenticationErrorDetail>
+      #
+      # Please see https://github.com/docker/build-push-action/issues/1371 for more
+      # information.
+      - name: Build platform images
         id: docker_build
         uses: docker/build-push-action@v6
         with:
-          cache-from: type=local,src=${{ env.BUILDX_CACHE_DIR }}
-          cache-to: type=local,dest=${{ env.BUILDX_CACHE_DIR }}
+          cache-from: type=gha
+          # We use the max mode to cache all layers which includes ones from
+          # intermediate steps. This will provide us the potential for more cache hits
+          # and thus better build times. It is also the suggested setting per the
+          # documentation:
+          # https://docs.docker.com/build/ci/github-actions/cache/#cache-backend-api
+          cache-to: type=gha,mode=max
+          # For a list of pre-defined annotation keys and value types see:
+          # https://github.com/opencontainers/image-spec/blob/master/annotations.md
           labels: ${{ needs.prepare.outputs.labels }}
-          platforms: |
-            linux/amd64
-            linux/arm/v6
-            linux/arm/v7
-            linux/arm64
-            linux/ppc64le
-            linux/s390x
+          platforms: ${{ join(fromJSON(needs.repo-metadata.outputs.image-platforms)) }}
+          # Uncomment the following option if you are building an image for use
+          # on Google Cloud Run or AWS Lambda. The current default image output
+          # is unable to run on either. Please see the following issue for more
+          # information: https://github.com/docker/buildx/issues/1533
+          # provenance: false
+          tags: ${{ needs.prepare.outputs.tags }}
+      # Now that the image layers should be available from the cache we can push to the
+      # registries.
+      - name: Push platform images to registries
+        id: docker_push
+        uses: docker/build-push-action@v6
+        with:
+          cache-from: type=gha
+          # We use the max mode to cache all layers which includes ones from
+          # intermediate steps. This will provide us the potential for more cache hits
+          # and thus better build times. It is also the suggested setting per the
+          # documentation:
+          # https://docs.docker.com/build/ci/github-actions/cache/#cache-backend-api
+          cache-to: type=gha,mode=max
+          # For a list of pre-defined annotation keys and value types see:
+          # https://github.com/opencontainers/image-spec/blob/master/annotations.md
+          labels: ${{ needs.prepare.outputs.labels }}
+          platforms: ${{ join(fromJSON(needs.repo-metadata.outputs.image-platforms)) }}
           # Uncomment the following option if you are building an image for use
           # on Google Cloud Run or AWS Lambda. The current default image output
           # is unable to run on either. Please see the following issue for more
@@ -429,17 +604,6 @@ jobs:
           # provenance: false
           push: true
           tags: ${{ needs.prepare.outputs.tags }}
-          # For a list of pre-defined annotation keys and value types see:
-          # https://github.com/opencontainers/image-spec/blob/master/annotations.md
-      - if: ${{ github.ref_name == 'develop' && github.event_name == 'push' }}
-        name: Update the Docker Hub description
-        uses: peter-evans/dockerhub-description@v4
-        with:
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          readme-filepath: README.md
-          repository: ${{ env.IMAGE_NAME }}
-          short-description: ${{ github.event.repository.description }}
-          username: ${{ secrets.DOCKER_USERNAME }}
       - name: Setup tmate debug session
         uses: mxschmitt/action-tmate@v3
         if: env.RUN_TMATE

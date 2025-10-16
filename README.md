@@ -2,7 +2,6 @@
 
 [![GitHub Build Status](https://github.com/cisagov/gatherer/workflows/build/badge.svg)](https://github.com/cisagov/gatherer/actions)
 [![CodeQL](https://github.com/cisagov/gatherer/workflows/CodeQL/badge.svg)](https://github.com/cisagov/gatherer/actions/workflows/codeql-analysis.yml)
-[![Known Vulnerabilities](https://snyk.io/test/github/cisagov/gatherer/badge.svg)](https://snyk.io/test/github/cisagov/gatherer)
 
 ## Docker Image ##
 

@@ -5,7 +5,7 @@
     },
     "pipfile-spec": 6,
     "requires": {
-      "python_full_version": "3.13.2"
+      "python_full_version": "3.13.5"
     },
     "sources": [
       {
