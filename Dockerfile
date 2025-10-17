@@ -3,11 +3,6 @@
 FROM docker.io/library/python:3.13.9-slim-bookworm AS compile-stage
 
 ###
-# Multi-platform build variables
-###
-ARG TARGETARCH
-
-###
 # Unprivileged user variables
 ###
 ARG CISA_USER="cisa"
@@ -66,11 +61,6 @@ FROM docker.io/library/python:3.13.9-slim-bookworm AS build-stage
 ###
 LABEL org.opencontainers.image.authors="vm-dev@gwe.cisa.dhs.gov"
 LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security Agency"
-
-###
-# Multi-platform build variables
-###
-ARG TARGETARCH
 
 ###
 # Unprivileged user setup variables
