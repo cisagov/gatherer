@@ -7,7 +7,7 @@
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/cisagov/gatherer)](https://hub.docker.com/r/cisagov/gatherer)
 [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/cisagov/gatherer)](https://hub.docker.com/r/cisagov/gatherer)
-[![Platforms](https://img.shields.io/badge/platforms-amd64%20%7C%20arm%2Fv6%20%7C%20arm%2Fv7%20%7C%20arm64%20%7C%20ppc64le%20%7C%20s390x-blue)](https://hub.docker.com/r/cisagov/gatherer/tags)
+[![Platforms](https://img.shields.io/badge/platforms-386%20%7C%20amd64%20%7C%20arm%2Fv6%20%7C%20arm%2Fv7%20%7C%20arm64%20%7C%20ppc64le%20%7C%20s390x-blue)](https://hub.docker.com/r/cisagov/gatherer/tags)
 
 This is a Docker container that uses [the `cisagov`
 fork](https://github.com/cisagov/domain-scan) of 18F's
