@@ -42,7 +42,7 @@ jobs:
               {
                   "description": "The name of the Docker image.",
                   "name": "image-name",
-                  "value": "cisagov/example",
+                  "value": "cisagov/gatherer",
               },
               {
                   "description": "The supported platforms for the Docker image.",
