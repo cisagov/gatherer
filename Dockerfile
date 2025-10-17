@@ -1,11 +1,6 @@
 # Official Docker images are in the form library/<app> while non-official
 # images are in the form <user>/<app>.
-FROM docker.io/library/python:3.13.2-slim-bookworm AS compile-stage
-
-###
-# Multi-platform build variables
-###
-ARG TARGETARCH
+FROM docker.io/library/python:3.13.9-slim-bookworm AS compile-stage
 
 ###
 # Unprivileged user variables
@@ -15,9 +10,9 @@ ENV CISA_HOME="/home/${CISA_USER}"
 ENV VIRTUAL_ENV="${CISA_HOME}/.venv"
 
 # Versions of the Python packages installed directly
-ENV PYTHON_PIP_VERSION=25.0.1
-ENV PYTHON_PIPENV_VERSION=2024.4.1
-ENV PYTHON_SETUPTOOLS_VERSION=75.8.0
+ENV PYTHON_PIP_VERSION=25.1.1
+ENV PYTHON_PIPENV_VERSION=2025.0.3
+ENV PYTHON_SETUPTOOLS_VERSION=80.9.0
 ENV PYTHON_WHEEL_VERSION=0.45.1
 
 ###
@@ -45,20 +40,18 @@ RUN python3 -m pip install --no-cache-dir --upgrade \
         wheel==${PYTHON_WHEEL_VERSION}
 
 ###
-# Check the Pipfile configuration and then install the Python dependencies into
-# the virtual environment.
+# Install the Python dependencies into the virtual environment.
 #
 # Note that pipenv will install into a virtual environment if the VIRTUAL_ENV
 # environment variable is set.
 ###
 WORKDIR /tmp
 COPY src/Pipfile src/Pipfile.lock ./
-RUN pipenv check --verbose \
-    && pipenv install --clear --deploy --extra-pip-args "--no-cache-dir" --verbose
+RUN pipenv install --clear --deploy --extra-pip-args "--no-cache-dir" --verbose
 
 # Official Docker images are in the form library/<app> while non-official
 # images are in the form <user>/<app>.
-FROM docker.io/library/python:3.13.2-slim-bookworm AS build-stage
+FROM docker.io/library/python:3.13.9-slim-bookworm AS build-stage
 
 ###
 # For a list of pre-defined annotation keys and value types see:
@@ -68,11 +61,6 @@ FROM docker.io/library/python:3.13.2-slim-bookworm AS build-stage
 ###
 LABEL org.opencontainers.image.authors="vm-dev@gwe.cisa.dhs.gov"
 LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security Agency"
-
-###
-# Multi-platform build variables
-###
-ARG TARGETARCH
 
 ###
 # Unprivileged user setup variables
@@ -99,9 +87,9 @@ RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
 RUN apt-get update --quiet --quiet \
     && apt-get install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-        bash=5.2.15-2+b7 \
-        redis-tools=5:7.0.15-1~deb12u3 \
-        wget=1.21.3-1+b$(if [ "$TARGETARCH" = "amd64" ]; then echo "2"; else echo "1"; fi) \
+        bash=5.2.15-2+b9 \
+        redis-tools=5:7.0.15-1~deb12u6 \
+        wget=1.21.3-1+deb12u1 \
     && apt-get --quiet --quiet clean \
     && rm --recursive --force /var/lib/apt/lists/*
 

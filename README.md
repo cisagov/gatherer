@@ -1,14 +1,13 @@
 # Gatherer #
 
-[![GitHub Build Status](https://github.com/cisagov/gatherer/workflows/build/badge.svg)](https://github.com/cisagov/gatherer/actions)
+[![GitHub Build Status](https://github.com/cisagov/gatherer/workflows/build/badge.svg)](https://github.com/cisagov/gatherer/actions/workflows/build.yml)
 [![CodeQL](https://github.com/cisagov/gatherer/workflows/CodeQL/badge.svg)](https://github.com/cisagov/gatherer/actions/workflows/codeql-analysis.yml)
-[![Known Vulnerabilities](https://snyk.io/test/github/cisagov/gatherer/badge.svg)](https://snyk.io/test/github/cisagov/gatherer)
 
 ## Docker Image ##
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/cisagov/gatherer)](https://hub.docker.com/r/cisagov/gatherer)
 [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/cisagov/gatherer)](https://hub.docker.com/r/cisagov/gatherer)
-[![Platforms](https://img.shields.io/badge/platforms-amd64%20%7C%20arm%2Fv6%20%7C%20arm%2Fv7%20%7C%20arm64%20%7C%20ppc64le%20%7C%20s390x-blue)](https://hub.docker.com/r/cisagov/gatherer/tags)
+[![Platforms](https://img.shields.io/badge/platforms-386%20%7C%20amd64%20%7C%20arm%2Fv6%20%7C%20arm%2Fv7%20%7C%20arm64%20%7C%20ppc64le%20%7C%20s390x-blue)](https://hub.docker.com/r/cisagov/gatherer/tags)
 
 This is a Docker container that uses [the `cisagov`
 fork](https://github.com/cisagov/domain-scan) of 18F's
@@ -34,7 +33,7 @@ expects the secrets in a different location.
 To run the `cisagov/gatherer` image via Docker:
 
 ```console
-docker run cisagov/gatherer:1.5.18
+docker run cisagov/gatherer:1.6.0
 ```
 
 ### Running with Docker Compose ###
@@ -47,7 +46,7 @@ docker run cisagov/gatherer:1.5.18
 
     services:
       gatherer:
-        image: cisagov/gatherer:1.5.18
+        image: cisagov/gatherer:1.6.0
         volumes:
           - source: <your_output_dir>
             target: /home/cisa/shared
@@ -93,7 +92,7 @@ environment variables.  See the
 
     services:
       gatherer:
-        image: cisagov/gatherer:1.5.18
+        image: cisagov/gatherer:1.6.0
         secrets:
           - source: database_creds
             target: database_creds.yml
@@ -130,7 +129,7 @@ environment variables.  See the
 1. Pull the new image:
 
     ```console
-    docker pull cisagov/gatherer:1.5.18
+    docker pull cisagov/gatherer:1.6.0
     ```
 
 1. Recreate and run the container by following the [previous instructions](#running-with-docker).
@@ -169,11 +168,11 @@ and then update dependencies as you would above.
 The images of this container are tagged with [semantic
 versions](https://semver.org) of the underlying gatherer project that they
 containerize.  It is recommended that most users use a version tag (e.g.
-`:1.5.18`).
+`:1.6.0`).
 
 | Image:tag | Description |
 |-----------|-------------|
-|`cisagov/gatherer:1.5.18`| An exact release version. |
+|`cisagov/gatherer:1.6.0`| An exact release version. |
 |`cisagov/gatherer:1.5`| The most recent release matching the major and minor version numbers. |
 |`cisagov/gatherer:1`| The most recent release matching the major version number. |
 |`cisagov/gatherer:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
@@ -236,7 +235,7 @@ Build the image locally using this git repository as the [build context](https:/
 
 ```console
 docker build \
-  --tag cisagov/gatherer:1.5.18 \
+  --tag cisagov/gatherer:1.6.0 \
   https://github.com/cisagov/gatherer.git#develop
 ```
 
@@ -267,7 +266,7 @@ Docker:
       --file Dockerfile-x \
       --platform linux/amd64 \
       --output type=docker \
-      --tag cisagov/gatherer:1.5.18 .
+      --tag cisagov/gatherer:1.6.0 .
     ```
 
 ## Contributing ##
