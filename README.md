@@ -1,6 +1,6 @@
 # Gatherer #
 
-[![GitHub Build Status](https://github.com/cisagov/gatherer/workflows/build/badge.svg)](https://github.com/cisagov/gatherer/actions)
+[![GitHub Build Status](https://github.com/cisagov/gatherer/workflows/build/badge.svg)](https://github.com/cisagov/gatherer/actions/workflows/build.yml)
 [![CodeQL](https://github.com/cisagov/gatherer/workflows/CodeQL/badge.svg)](https://github.com/cisagov/gatherer/actions/workflows/codeql-analysis.yml)
 
 ## Docker Image ##
