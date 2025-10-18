@@ -1,6 +1,6 @@
 # Official Docker images are in the form library/<app> while non-official
 # images are in the form <user>/<app>.
-FROM docker.io/library/python:3.14.0-slim-bookworm AS compile-stage
+FROM docker.io/library/python:3.14.0-slim-trixie AS compile-stage
 
 ###
 # Unprivileged user variables
@@ -51,7 +51,7 @@ RUN pipenv install --clear --deploy --extra-pip-args "--no-cache-dir" --verbose
 
 # Official Docker images are in the form library/<app> while non-official
 # images are in the form <user>/<app>.
-FROM docker.io/library/python:3.14.0-slim-bookworm AS build-stage
+FROM docker.io/library/python:3.14.0-slim-trixie AS build-stage
 
 ###
 # For a list of pre-defined annotation keys and value types see:
@@ -87,9 +87,9 @@ RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
 RUN apt-get update --quiet --quiet \
     && apt-get install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-        bash=5.2.15-2+b9 \
-        redis-tools=5:7.0.15-1~deb12u6 \
-        wget=1.21.3-1+deb12u1 \
+        bash=5.2.37-2+b5 \
+        redis-tools=5:8.0.2-3+deb13u1 \
+        wget=1.25.0-2 \
     && apt-get --quiet --quiet clean \
     && rm --recursive --force /var/lib/apt/lists/*
 
