@@ -16,10 +16,10 @@ ENV PYTHON_SETUPTOOLS_VERSION=80.9.0
 ENV PYTHON_WHEEL_VERSION=0.45.1
 
 ###
-# Install the specified versions of pip, setuptools, and wheel into the system
-# Python environment; install the specified version of pipenv into the system Python
-# environment; set up a Python virtual environment (venv); and install the specified
-# versions of pip, setuptools, and wheel into the venv.
+# Install the specified versions of pip, setuptools, and wheel;
+# install the specified version of pipenv; create the image dependency
+# venv; and install the specified versions of pip, setuptools, and
+# wheel into the dependency venv.
 #
 # Note that we use the --no-cache-dir flag to avoid writing to a local
 # cache.  This results in a smaller final image, at the cost of
