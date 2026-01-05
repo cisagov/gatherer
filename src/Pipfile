@@ -7,7 +7,7 @@ name = "pypi"
 [packages]
 # Required by src/fed_hostnames.py
 docopt = "*"
-mongo_db_from_config = {file = "https://github.com/cisagov/mongo-db-from-config/archive/v1.1.0.tar.gz"}
+mongo_db_from_config = {file = "https://github.com/cisagov/mongo-db-from-config/archive/v1.2.1.tar.gz"}
 # Required by cisagov/domain-scan per the following pip requirements files:
 # https://github.com/cisagov/domain-scan/blob/13d7e7c12a546213247f7b7a13e3241f0a9dba3f/requirements.txt
 # https://github.com/cisagov/domain-scan/blob/13d7e7c12a546213247f7b7a13e3241f0a9dba3f/lambda/requirements-lambda.txt
