@@ -1,6 +1,6 @@
 # Official Docker images are in the form library/<app> while non-official
 # images are in the form <user>/<app>.
-FROM docker.io/library/python:3.14.1-slim-trixie AS compile-stage
+FROM docker.io/library/python:3.14.2-slim-trixie AS compile-stage
 
 ###
 # Unprivileged user variables
@@ -51,7 +51,7 @@ RUN pipenv install --clear --deploy --extra-pip-args "--no-cache-dir" --verbose
 
 # Official Docker images are in the form library/<app> while non-official
 # images are in the form <user>/<app>.
-FROM docker.io/library/python:3.14.1-slim-trixie AS build-stage
+FROM docker.io/library/python:3.14.2-slim-trixie AS build-stage
 
 ###
 # For a list of pre-defined annotation keys and value types see:
@@ -84,13 +84,13 @@ RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
 # We need redis-tools so we can use redis-cli to communicate with
 # redis.  wget is used inside of gather-domains.sh.
 ###
-RUN apt-get update --quiet --quiet \
-    && apt-get install --quiet --quiet --yes \
+RUN apt update --quiet --quiet \
+    && apt install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
         bash=5.2.37-2+b5 \
         redis-tools=5:8.0.2-3+deb13u1 \
         wget=1.25.0-2 \
-    && apt-get --quiet --quiet clean \
+    && apt --quiet --quiet clean \
     && rm --recursive --force /var/lib/apt/lists/*
 
 ###
