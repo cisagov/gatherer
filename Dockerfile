@@ -84,7 +84,7 @@ RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
 RUN apt update --quiet --quiet \
     && apt install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-        bash=5.2.37-2+b7 \
+        bash=5.2.37-2+b8 \
         redis-tools=5:8.0.2-3+deb13u1 \
         wget=1.25.0-2 \
     && apt --quiet --quiet clean \
