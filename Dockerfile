@@ -1,6 +1,6 @@
 # Official Docker images are in the form library/<app> while non-official
 # images are in the form <user>/<app>.
-FROM docker.io/library/python:3.14.3-slim-trixie AS compile-stage
+FROM docker.io/library/python:3.14.5-slim-trixie AS compile-stage
 
 ###
 # Unprivileged user variables
@@ -10,9 +10,9 @@ ENV CISA_HOME="/home/${CISA_USER}"
 ENV VIRTUAL_ENV="${CISA_HOME}/.venv"
 
 # Versions of the Python packages installed directly
-ENV PYTHON_PIP_VERSION=26.0.1
-ENV PYTHON_PIPENV_VERSION=2026.0.3
-ENV PYTHON_SETUPTOOLS_VERSION=82.0.0
+ENV PYTHON_PIP_VERSION=26.1.1
+ENV PYTHON_PIPENV_VERSION=2026.6.1
+ENV PYTHON_SETUPTOOLS_VERSION=82.0.1
 
 ###
 # Install the specified versions of pip and setuptools into the system
@@ -44,11 +44,11 @@ RUN python3 -m pip install --no-cache-dir --upgrade \
 ###
 WORKDIR /tmp
 COPY src/Pipfile src/Pipfile.lock ./
-RUN pipenv install --clear --deploy --extra-pip-args "--no-cache-dir" --verbose
+RUN pipenv install --clear --deploy --extra-pip-args="--no-cache-dir" --verbose
 
 # Official Docker images are in the form library/<app> while non-official
 # images are in the form <user>/<app>.
-FROM docker.io/library/python:3.14.3-slim-trixie AS build-stage
+FROM docker.io/library/python:3.14.5-slim-trixie AS build-stage
 
 ###
 # For a list of pre-defined annotation keys and value types see:
@@ -84,7 +84,7 @@ RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
 RUN apt update --quiet --quiet \
     && apt install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-        bash=5.2.37-2+b8 \
+        bash=5.2.37-2+b9 \
         redis-tools=5:8.0.2-3+deb13u1 \
         wget=1.25.0-2 \
     && apt --quiet --quiet clean \
