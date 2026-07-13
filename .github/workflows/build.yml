@@ -489,6 +489,83 @@ jobs:
       - name: Setup tmate debug session
         uses: mxschmitt/action-tmate@v3
         if: env.RUN_TMATE
+  test-build-each-platform:
+    name: Test build the ${{ matrix.platform }} image
+    needs:
+      - diagnostics
+      - lint
+      - repo-metadata
+      - prepare
+      - scan
+      - test
+    permissions:
+      # actions/checkout needs this to fetch code
+      contents: read
+      # When Dependabot creates a PR it requires this permission in
+      # order to push Docker images to ghcr.io.
+      packages: write
+    runs-on: ubuntu-latest
+    strategy:
+      # We want each platform to build regardless of problems with other platforms
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJSON(needs.repo-metadata.outputs.image-platforms) }}
+    steps:
+      - name: Apply standard cisagov job preamble
+        uses: cisagov/action-job-preamble@v1
+        with:
+          # This functionality is poorly implemented and has been
+          # causing problems due to the MITM implementation hogging or
+          # leaking memory.  As a result we disable it by default.  If
+          # you want to temporarily enable it, simply set
+          # monitor_permissions equal to "true".
+          #
+          # TODO: Re-enable this functionality when practical.  See
+          # cisagov/skeleton-docker#224 for more details.
+          monitor_permissions: "false"
+          # Use a variable to specify the permissions monitoring
+          # configuration. By default this will yield the
+          # configuration stored in the cisagov organization-level
+          # variable, but if you want to use a different configuration
+          # then simply:
+          # 1. Create a repository-level variable with the name
+          # ACTIONS_PERMISSIONS_CONFIG.
+          # 2. Set this new variable's value to the configuration you
+          # want to use for this repository.
+          #
+          # Note in particular that changing the permissions
+          # monitoring configuration *does not* require you to modify
+          # this workflow.
+          permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      - name: Build a platform's image
+        id: docker_build
+        uses: docker/build-push-action@v7
+        with:
+          cache-from: type=gha
+          # We use the max mode to cache all layers which includes ones from
+          # intermediate steps. This will provide us the potential for more cache hits
+          # and thus better build times. It is also the suggested setting per the
+          # documentation:
+          # https://docs.docker.com/build/ci/github-actions/cache/#cache-backend-api
+          cache-to: type=gha,mode=max
+          # For a list of pre-defined annotation keys and value types see:
+          # https://github.com/opencontainers/image-spec/blob/master/annotations.md
+          labels: ${{ needs.prepare.outputs.labels }}
+          platforms: ${{ matrix.platform }}
+          # Ensure we do not push the image to the registry as this is only a test build
+          push: false
+      - name: Setup tmate debug session
+        uses: mxschmitt/action-tmate@v3
+        if: env.RUN_TMATE
   build-push-all:
     # Builds the final set of images for each of the platforms specified in the
     # "platforms" input for the docker/build-push-action Action.  These images
@@ -505,6 +582,7 @@ jobs:
       - prepare
       - scan
       - test
+      - test-build-each-platform
     permissions:
       # actions/checkout needs this to fetch code
       contents: read
