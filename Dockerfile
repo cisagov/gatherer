@@ -85,7 +85,7 @@ RUN apt update --quiet --quiet \
     && apt install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
         bash=5.2.37-2+b9 \
-        redis-tools=5:8.0.2-3+deb13u1 \
+        redis-tools=5:8.0.2-3+deb13u2 \
         wget=1.25.0-2 \
     && apt --quiet --quiet clean \
     && rm --recursive --force /var/lib/apt/lists/*
