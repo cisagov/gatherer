@@ -10,8 +10,11 @@ ENV CISA_HOME="/home/${CISA_USER}"
 ENV VIRTUAL_ENV="${CISA_HOME}/.venv"
 
 # Versions of the Python packages installed directly
+# renovate: datasource=pypi depName=pip
 ENV PYTHON_PIP_VERSION=26.1.2
+# renovate: datasource=pypi depName=pipenv
 ENV PYTHON_PIPENV_VERSION=2026.6.2
+# renovate: datasource=pypi depName=setuptools
 ENV PYTHON_SETUPTOOLS_VERSION=82.0.1
 
 ###
@@ -81,12 +84,19 @@ RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
 # We need redis-tools so we can use redis-cli to communicate with
 # redis.  wget is used inside of gather-domains.sh.
 ###
+# renovate: datasource=deb depName=bash
+ENV BASH_VERSION=5.2.37-2+b9
+# renovate: datasource=deb depName=redis-tools
+ENV REDIS_TOOLS_VERSION=5:8.0.2-3+deb13u2
+# renovate: datasource=deb depName=wget
+ENV WGET_VERSION=1.25.0-2
+ENV DEPS="bash=${BASH_VERSION} \
+    redis-tools=${REDIS_TOOLS_VERSION} \
+    wget=${WGET_VERSION}"
 RUN apt update --quiet --quiet \
     && apt install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-        bash=5.2.37-2+b9 \
-        redis-tools=5:8.0.2-3+deb13u2 \
-        wget=1.25.0-2 \
+    $DEPS \
     && apt --quiet --quiet clean \
     && rm --recursive --force /var/lib/apt/lists/*
 
