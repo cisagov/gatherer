@@ -34,7 +34,7 @@ expects the secrets in a different location.
 To run the `cisagov/gatherer` image via Docker:
 
 ```console
-docker run cisagov/gatherer:2.0.5
+docker run cisagov/gatherer:2.0.6
 ```
 
 ### Running with Docker Compose ###
@@ -47,7 +47,7 @@ docker run cisagov/gatherer:2.0.5
 
     services:
       gatherer:
-        image: cisagov/gatherer:2.0.5
+        image: cisagov/gatherer:2.0.6
         volumes:
           - source: <your_output_dir>
             target: /home/cisa/shared
@@ -93,7 +93,7 @@ environment variables.  See the
 
     services:
       gatherer:
-        image: cisagov/gatherer:2.0.5
+        image: cisagov/gatherer:2.0.6
         secrets:
           - source: database_creds
             target: database_creds.yml
@@ -130,7 +130,7 @@ environment variables.  See the
 1. Pull the new image:
 
     ```console
-    docker pull cisagov/gatherer:2.0.5
+    docker pull cisagov/gatherer:2.0.6
     ```
 
 1. Recreate and run the container by following the [previous instructions](#running-with-docker).
@@ -166,11 +166,11 @@ and then update dependencies as you would above.
 The images of this container are tagged with [semantic
 versions](https://semver.org) of the underlying gatherer project that they
 containerize.  It is recommended that most users use a version tag (e.g.
-`:2.0.5`).
+`:2.0.6`).
 
 | Image:tag | Description |
 | --------- | ----------- |
-| `cisagov/gatherer:2.0.5` | An exact release version. |
+| `cisagov/gatherer:2.0.6` | An exact release version. |
 | `cisagov/gatherer:2.0` | The most recent release matching the major and minor version numbers. |
 | `cisagov/gatherer:2` | The most recent release matching the major version number. |
 | `cisagov/gatherer:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
@@ -233,7 +233,7 @@ Build the image locally using this git repository as the [build context](https:/
 
 ```console
 docker build \
-  --tag cisagov/gatherer:2.0.5 \
+  --tag cisagov/gatherer:2.0.6 \
   https://github.com/cisagov/gatherer.git#develop
 ```
 
@@ -264,7 +264,7 @@ Docker:
       --file Dockerfile-x \
       --platform linux/amd64 \
       --output type=docker \
-      --tag cisagov/gatherer:2.0.5 .
+      --tag cisagov/gatherer:2.0.6 .
     ```
 
 ## Contributing ##
