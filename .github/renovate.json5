@@ -1,0 +1,47 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  constraints: {
+    // Must be kept in sync with the major-minor version of Python
+    // being used in the base containers in the Dockerfile.
+    python: "==3.14",
+  },
+
+  customManagers: [
+    {
+      customType: "regex",
+      datasourceTemplate: "pypi",
+      managerFilePatterns: ["Dockerfile"],
+      matchStrings: [
+        "#\\s*renovate:\\s*datasource=pypi\\s+depName=(?<depName>\\S+)\\s*(ENV|ARG)?\\s*.+_VERSION=(?<currentValue>\\S+)",
+      ],
+    },
+    {
+      customType: "regex",
+      datasourceTemplate: "deb",
+      managerFilePatterns: ["Dockerfile"],
+      matchStrings: [
+        "#\\s*renovate:\\s*datasource=deb\\s+depName=(?<depName>\\S+)\\s*(ENV|ARG)?\\s*.+_VERSION=(?<currentValue>\\S+)",
+      ],
+      // The suite here must be kept in sync with the Debian release
+      // used in the base containers in the Dockerfile.
+      //
+      // Note also that the same package version is offered for all
+      // architectures.  In rare cases this is not the case.
+      registryUrlTemplate: "https://deb.debian.org/debian?suite=trixie&components=main,contrib,non-free&binaryArch=amd64",
+    },
+    {
+      customType: "regex",
+      datasourceTemplate: "github-releases",
+      depNameTemplate: "cisagov/mongo-db-from-config",
+      managerFilePatterns: ["/^src/Pipfile$/"],
+      matchStrings: [
+        "cisagov/mongo-db-from-config/archive/(?<currentValue>\\S+).tar.gz",
+      ],
+      versioningTemplate: "semver-coerced", // handles the leading `v`
+    },
+  ],
+  dependencyDashboard: true,
+  enabledManagers: ["custom.regex"],
+  extends: ["config:recommended"],
+  labels: ["dependencies"],
+}
