@@ -15,7 +15,7 @@ ENV PYTHON_PIP_VERSION=26.2.1
 # renovate: datasource=pypi depName=pipenv
 ENV PYTHON_PIPENV_VERSION=2026.8.0
 # renovate: datasource=pypi depName=setuptools
-ENV PYTHON_SETUPTOOLS_VERSION=82.0.1
+ENV PYTHON_SETUPTOOLS_VERSION=84.0.0
 
 ###
 # Install the specified versions of pip and setuptools into the system
