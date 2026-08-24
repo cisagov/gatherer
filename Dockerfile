@@ -11,7 +11,7 @@ ENV VIRTUAL_ENV="${CISA_HOME}/.venv"
 
 # Versions of the Python packages installed directly
 # renovate: datasource=pypi depName=pip
-ENV PYTHON_PIP_VERSION=26.1.2
+ENV PYTHON_PIP_VERSION=26.2.1
 # renovate: datasource=pypi depName=pipenv
 ENV PYTHON_PIPENV_VERSION=2026.6.2
 # renovate: datasource=pypi depName=setuptools
