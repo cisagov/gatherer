@@ -85,7 +85,7 @@ RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
 # redis.  wget is used inside of gather-domains.sh.
 ###
 # renovate: datasource=deb depName=bash
-ENV BASH_VERSION=5.2.37-2+b9
+ENV BASH_VERSION=5.2.37-2+b10
 # renovate: datasource=deb depName=redis-tools
 ENV REDIS_TOOLS_VERSION=5:8.0.2-3+deb13u2
 # renovate: datasource=deb depName=wget
