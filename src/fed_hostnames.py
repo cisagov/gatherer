@@ -21,6 +21,7 @@ Options:
 """
 
 # Standard Python Libraries
+import csv
 import logging
 import re
 
@@ -147,9 +148,10 @@ def main():
         {"_id": False, "hostname": True, "owner": True},
     )
 
-    with open(args["--output-file"], "w") as file:
+    with open(args["--output-file"], "w", newline="") as file:
+        writer = csv.writer(file)
         for host in fed_hosts:
-            file.write("{},{}\n".format(host["hostname"], host["owner"]))
+            writer.writerow([host["hostname"], host["owner"]])
             logging.debug(f"Federal host {host}")
 
 
