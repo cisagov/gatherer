@@ -94,7 +94,8 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v6
       - name: Update the Docker Hub description
-        uses: peter-evans/dockerhub-description@v5
+        # yamllint disable-line rule:line-length
+        uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa  # v5.0.0
         with:
           password: ${{ secrets.DOCKER_PASSWORD }}
           readme-filepath: README.md

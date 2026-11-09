@@ -540,20 +540,22 @@ jobs:
           # this workflow.
           permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - name: Login to Docker Hub
-        uses: docker/login-action@v4
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550  # v4.8.0
         with:
           password: ${{ secrets.DOCKER_PASSWORD }}
           username: ${{ secrets.DOCKER_USERNAME }}
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v4
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550  # v4.8.0
         with:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
           username: ${{ github.actor }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
+        # yamllint disable-line rule:line-length
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1  # v4.4.0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        # yamllint disable-line rule:line-length
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069  # v4.4.1
       # We only build to ensure that the image layers are cached to push later. This is
       # because if the build takes over 10 minutes the token acquired to push to the
       # GitHub Container Registry will have expired. This results in errors like:
@@ -566,7 +568,8 @@ jobs:
       # information.
       - name: Build platform images
         id: docker_build
-        uses: docker/build-push-action@v7
+        # yamllint disable-line rule:line-length
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc  # v7.4.0
         with:
           cache-from: type=gha
           # We use the max mode to cache all layers which includes ones from
@@ -589,7 +592,8 @@ jobs:
       # registries.
       - name: Push platform images to registries
         id: docker_push
-        uses: docker/build-push-action@v7
+        # yamllint disable-line rule:line-length
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc  # v7.4.0
         with:
           cache-from: type=gha
           # We use the max mode to cache all layers which includes ones from
@@ -610,5 +614,5 @@ jobs:
           push: true
           tags: ${{ needs.prepare.outputs.tags }}
       - name: Setup tmate debug session
-        uses: mxschmitt/action-tmate@v3
+        uses: mxschmitt/action-tmate@35b54afac29c97fb54faba5b513f8fbd1882f113  # v3.24
         if: env.RUN_TMATE
