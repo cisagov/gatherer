@@ -24,6 +24,7 @@ Options:
 import csv
 import logging
 import re
+import sys
 
 # Third-Party Libraries
 from docopt import docopt
@@ -156,4 +157,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
