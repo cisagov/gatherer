@@ -27,11 +27,12 @@ Docker container is run via the Docker composition in
 [cisagov/orchestrator](https://github.com/cisagov/orchestrator), which
 expects the secrets in a different location.
 
-**N.B.:** The `compose.yml` composition requires a `REDIS_PASSWORD`
-environment variable to secure its Redis service; the composition will
-refuse to start without it.  You can provide one in your shell
-environment or in a [`.env` file][dotenv] in the root of the
-repository; for example:
+**N.B.:** The Redis service in the `compose.yml` composition requires
+authentication.  The password is taken from the `REDIS_PASSWORD`
+environment variable, falling back to a well-known development-only
+default, so any use of the composition beyond local build and test
+must set its own value — either in your shell environment or in a
+[`.env` file][dotenv] in the root of the repository; for example:
 
 ```console
 echo "REDIS_PASSWORD=$(openssl rand -hex 16)" > .env
