@@ -135,9 +135,15 @@ COPY --chown=${CISA_USER}:${CISA_GROUP} src ${CISA_HOME}
 
 ###
 # Prepare to run
+#
+# Pre-create ${CISA_HOME}/shared with the correct ownership so that the
+# entrypoint can create files there without running as root.  Note that
+# when a host directory is bind mounted over ${CISA_HOME}/shared it masks
+# this directory, so the host directory must itself be writable by UID
+# ${CISA_UID} as described in the README.
 ###
+RUN mkdir --parents ${CISA_HOME}/shared \
+    && chown ${CISA_USER}:${CISA_GROUP} ${CISA_HOME}/shared
 WORKDIR ${CISA_HOME}
-# Right now we need to be root at runtime in order to create files in
-# ${CISA_HOME}/shared
-# USER ${CISA_USER}:${CISA_GROUP}
+USER ${CISA_USER}:${CISA_GROUP}
 ENTRYPOINT ["./gather-domains.sh"]
