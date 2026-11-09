@@ -27,6 +27,16 @@ Docker container is run via the Docker composition in
 [cisagov/orchestrator](https://github.com/cisagov/orchestrator), which
 expects the secrets in a different location.
 
+**N.B.:** The `compose.yml` composition requires a `REDIS_PASSWORD`
+environment variable to secure its Redis service; the composition will
+refuse to start without it.  You can provide one in your shell
+environment or in a [`.env` file][dotenv] in the root of the
+repository; for example:
+
+```console
+echo "REDIS_PASSWORD=$(openssl rand -hex 16)" > .env
+```
+
 ## Running ##
 
 ### Running with Docker ###
@@ -230,13 +240,9 @@ There are no required environment variables.
 
 ### Optional ###
 
-There are no optional environment variables.
-
-<!--
 | Name | Purpose | Default |
 | ---- | ------- | ------- |
-| `OPTIONAL_VARIABLE` | Describe its purpose. | `null` |
--->
+| `REDISCLI_AUTH` | The password that `redis-cli` uses to authenticate to the Redis server when the container signals that gathering is complete.  Required if your Redis server requires authentication. | `null` |
 
 ## Secrets ##
 
@@ -303,3 +309,4 @@ dedication. By submitting a pull request, you are agreeing to comply
 with this waiver of copyright interest.
 
 [Pipenv]: https://pypi.org/project/pipenv/
+[dotenv]: https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/#env-file

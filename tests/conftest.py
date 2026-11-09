@@ -3,6 +3,10 @@
 https://docs.pytest.org/en/latest/writing_plugins.html#conftest-py-plugins
 """
 
+# Standard Python Libraries
+import os
+import secrets
+
 # Third-Party Libraries
 import pytest
 from python_on_whales import docker
@@ -15,6 +19,9 @@ VERSION_FILE = "src/version.txt"
 @pytest.fixture(scope="session")
 def dockerc():
     """Start up the Docker composition."""
+    # The composition requires a Redis password; generate a throwaway
+    # value if the environment does not already provide one.
+    os.environ.setdefault("REDIS_PASSWORD", secrets.token_hex(16))
     docker.compose.up(detach=True)
     yield docker
     docker.compose.down()
