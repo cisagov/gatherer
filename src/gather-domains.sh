@@ -1,7 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 ###
 # Gather hostnames and do any necessary scrubbing of the data.
 ###
+
+# Fail fast: abort on any command failure, on any unset variable, and
+# on a failure in any part of a pipeline.  This ensures that a failed
+# fetch or processing step cannot fall through to the completion
+# signal at the end of this script.
+set -euo pipefail
 
 HOME_DIR=/home/cisa
 OUTPUT_DIR=$HOME_DIR/shared/artifacts
