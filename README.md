@@ -73,10 +73,11 @@ docker run cisagov/gatherer:2.0.8
     chown --recursive 421:421 <your_output_dir>
     ```
 
-    Alternatively, you can add a
+    Changing the service's
     [`user` key](https://docs.docker.com/reference/compose-file/services/#user)
-    to the `gatherer` service to run the container as a user that
-    already has write access to the bind mounted directory.
+    to another unprivileged UID also requires granting that UID write
+    access to `/home/cisa`, where the entrypoint creates working files;
+    write access to the bind mounted directory alone is not sufficient.
 
 1. Start the container and detach:
 
