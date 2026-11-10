@@ -118,7 +118,7 @@ first_column = []
 
 with open('scanme.csv', 'w') as scanme:
     writer = csv.writer(scanme)
-    with open('gathered.csv', mode='r') as gathered:
+    with open('gathered.csv', mode='r', newline='') as gathered:
         reader = csv.reader(gathered)
         header = next(reader)
         writer.writerow(header[:1])
