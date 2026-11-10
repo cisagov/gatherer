@@ -70,7 +70,7 @@ docker run cisagov/gatherer:2.0.8
    runs as:
 
     ```console
-    chown 421:421 <your_output_dir>
+    chown --recursive 421:421 <your_output_dir>
     ```
 
     Alternatively, you can add a
@@ -212,7 +212,7 @@ Hub for a list of all the supported tags.
 
 This container runs as an unprivileged user (UID/GID 421), so any host
 directory bind mounted to `/home/cisa/shared` must be writable by UID
-421 (e.g. `chown 421:421 <your_output_dir>`).
+421 (e.g. `chown --recursive 421:421 <your_output_dir>`).
 
 ## Ports ##
 
