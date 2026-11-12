@@ -1,7 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 ###
 # Gather hostnames and do any necessary scrubbing of the data.
 ###
+
+# Fail fast: abort on any command failure, on any unset variable, and
+# on a failure in any part of a pipeline.  This ensures that a failed
+# fetch or processing step cannot fall through to the completion
+# signal at the end of this script.
+set -euo pipefail
 
 HOME_DIR=/home/cisa
 OUTPUT_DIR=$HOME_DIR/shared/artifacts
@@ -104,8 +110,23 @@ $HOME_DIR/domain-scan/gather current_federal,analytics_usa_gov,censys_snapshot,r
 cp results/gathered.csv gathered.csv
 cp results/gathered.csv $OUTPUT_DIR/gathered.csv
 
-# Remove extra columns
-cut -d"," -f1 gathered.csv > scanme.csv
+# Remove extra columns in a way that is aware of the CSV format
+python3 -c "
+import csv
+
+first_column = []
+
+with open('scanme.csv', 'w') as scanme:
+    writer = csv.writer(scanme)
+    with open('gathered.csv', mode='r', newline='') as gathered:
+        reader = csv.reader(gathered)
+        header = next(reader)
+        writer.writerow(header[:1])
+        for row in reader:
+            # Makes sure row is not empty
+            if row:
+                writer.writerow(row[:1])
+"
 
 # Remove characters that might break parsing
 sed -i '/^ *$/d;/@/d;s/ //g;s/\"//g;s/'\''//g' scanme.csv
