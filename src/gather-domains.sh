@@ -53,21 +53,23 @@ sed -i '/^fed\.us,.*/d' $OUTPUT_DIR/current-federal_modified.csv
 # the judicial branch and have asked us to stop scanning them.
 #
 # Also remove all other domains that belong to the judicial branch.
-###
-sed -i '/[^,]*,[^,]*,U\.S\. Courts,/d;/[^,]*,[^,]*,The Supreme Court,/d' \
-  $OUTPUT_DIR/current-federal_modified.csv
-###
-# Remove all domains that belong to the legislative branch, with the
-# exception of the House of Representatives (HOR).  HOR specifically
-# asked to receive HTTPS and Trustworthy Email reports, as discussed
-# in CYHY-617 and OPS-2263.
 #
-# Furthermore, as mentioned in CYHY-617, a domain is associated with
-# HOR if and only if the domain is labeled "The Legislative Branch
-# (Congress)" in current-federal.
+# Also remove all domains that belong to the legislative branch, with
+# the exception of the House of Representatives (HOR).  HOR
+# specifically asked to receive HTTPS and Trustworthy Email reports,
+# as discussed in CYHY-617 and OPS-2263.
+#
+# Instead of matching organization names, which are respelled or
+# renamed upstream from time to time, we key on the "Domain type"
+# field (the second column), which records the branch of government.
+# A domain is associated with HOR if and only if its "Organization
+# name" field (the third column) is "United States House of
+# Representatives" in current-federal.
 ###
-sed -i '/[^,]*,[^,]*,Library of Congress,/d;/[^,]*,[^,]*,Government Publishing Office,/d;/[^,]*,[^,]*,Congressional Office of Compliance,/d;/[^,]*,[^,]*,Stennis Center for Public Service,/d;/[^,]*,[^,]*,U\.S\. Capitol Police,/d;/[^,]*,[^,]*,Architect of the Capitol,/d' \
-  $OUTPUT_DIR/current-federal_modified.csv
+awk -F, \
+  '!($2 == "Federal - Judicial" || ($2 == "Federal - Legislative" && $3 != "United States House of Representatives"))' \
+  $OUTPUT_DIR/current-federal_modified.csv > /tmp/current-federal_filtered.csv
+mv /tmp/current-federal_filtered.csv $OUTPUT_DIR/current-federal_modified.csv
 
 ###
 # Gather hostnames using cisagov/dotgov-data, analytics.usa.gov, Censys, EOT,
