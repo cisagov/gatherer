@@ -27,6 +27,17 @@ Docker container is run via the Docker composition in
 [cisagov/orchestrator](https://github.com/cisagov/orchestrator), which
 expects the secrets in a different location.
 
+**N.B.:** The Redis service in the `compose.yml` composition requires
+authentication.  The password is taken from the `REDIS_PASSWORD`
+environment variable, falling back to a well-known development-only
+default, so any use of the composition beyond local build and test
+must set its own value — either in your shell environment or in a
+[`.env` file][dotenv] in the root of the repository; for example:
+
+```console
+echo "REDIS_PASSWORD=$(openssl rand -hex 16)" > .env
+```
+
 ## Running ##
 
 ### Running with Docker ###
@@ -53,6 +64,20 @@ docker run cisagov/gatherer:2.0.8
             target: /home/cisa/shared
             type: bind
     ```
+
+1. Ensure that the host directory you bind mount to `/home/cisa/shared`
+   is writable by the unprivileged user (UID 421) that the container
+   runs as:
+
+    ```console
+    chown --recursive 421:421 <your_output_dir>
+    ```
+
+    Changing the service's
+    [`user` key](https://docs.docker.com/reference/compose-file/services/#user)
+    to another unprivileged UID also requires granting that UID write
+    access to `/home/cisa`, where the entrypoint creates working files;
+    write access to the bind mounted directory alone is not sufficient.
 
 1. Start the container and detach:
 
@@ -186,6 +211,10 @@ Hub for a list of all the supported tags.
 | ----------- | ------- |
 | /home/cisa/shared | Output |
 
+This container runs as an unprivileged user (UID/GID 421), so any host
+directory bind mounted to `/home/cisa/shared` must be writable by UID
+421 (e.g. `chown --recursive 421:421 <your_output_dir>`).
+
 ## Ports ##
 
 There are no ports exposed by this container.
@@ -213,13 +242,9 @@ There are no required environment variables.
 
 ### Optional ###
 
-There are no optional environment variables.
-
-<!--
 | Name | Purpose | Default |
 | ---- | ------- | ------- |
-| `OPTIONAL_VARIABLE` | Describe its purpose. | `null` |
--->
+| `REDISCLI_AUTH` | The password that `redis-cli` uses to authenticate to the Redis server when the container signals that gathering is complete.  Required if your Redis server requires authentication. | `null` |
 
 ## Secrets ##
 
@@ -286,3 +311,4 @@ dedication. By submitting a pull request, you are agreeing to comply
 with this waiver of copyright interest.
 
 [Pipenv]: https://pypi.org/project/pipenv/
+[dotenv]: https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/#env-file
