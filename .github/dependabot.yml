@@ -36,17 +36,11 @@ updates:
       - dependency-name: github/codeql-action
       - dependency-name: hashicorp/setup-packer
       - dependency-name: hashicorp/setup-terraform
-      - dependency-name: mxschmitt/action-tmate
       # Managed by cisagov/skeleton-docker
       - dependency-name: actions/download-artifact
       - dependency-name: actions/upload-artifact
       - dependency-name: aquasecurity/trivy-action
-      - dependency-name: docker/build-push-action
-      - dependency-name: docker/login-action
       - dependency-name: docker/metadata-action
-      - dependency-name: docker/setup-buildx-action
-      - dependency-name: docker/setup-qemu-action
-      - dependency-name: peter-evans/dockerhub-description
     labels:
       # dependabot default we need to replicate
       - dependencies
