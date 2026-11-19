@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a5012adc7912359544e817d63b4071e78f92fbde44f5b8dcd6c4882902c6df54"
+            "sha256": "cb977afef6139954939cc502d0257a8b05d632c255959d00a57568f65eb3c497"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -260,7 +260,7 @@
             "version": "==1.1.0"
         },
         "mongo-db-from-config": {
-            "file": "https://github.com/cisagov/mongo-db-from-config/archive/v1.2.1.tar.gz"
+            "file": "https://github.com/cisagov/mongo-db-from-config/archive/8ef326ac833252315be9e5e8778c3cc66c198c71.tar.gz"
         },
         "publicsuffixlist": {
             "extras": [

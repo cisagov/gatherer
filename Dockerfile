@@ -103,14 +103,28 @@ RUN apt update --quiet --quiet \
 ###
 # Install domain-scan
 #
-# The SHELL command is used to ensure that if either the curl call or
-# the tar call fail then the image build fails. Source:
+# The SHELL command is used to ensure that if any command in a pipeline
+# fails then the image build fails. Source:
 # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#using-pipes
 ###
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# domain-scan is fetched at a pinned commit and the downloaded tarball is
+# verified against a recorded checksum before extraction so that image
+# builds are reproducible.  To bump the pin, update DOMAIN_SCAN_REF to the
+# new commit SHA and recalculate DOMAIN_SCAN_SHA256 to match:
+#   wget --output-document - https://github.com/cisagov/domain-scan/tarball/<ref> | sha256sum
+# Renovate proposes updates to DOMAIN_SCAN_REF as the upstream branch moves
+# (see .github/renovate.json5), but DOMAIN_SCAN_SHA256 must be updated by
+# hand in the same change.
+ARG DOMAIN_SCAN_REF=13d7e7c12a546213247f7b7a13e3241f0a9dba3f
+ARG DOMAIN_SCAN_SHA256=c1f4b7ef393496f9e842ee68b2928b2c2b3ce9dfe3b0e9d6ea9f4c0212f5f088
 RUN mkdir ${CISA_HOME}/domain-scan \
-    && wget --relative --output-document - https://github.com/cisagov/domain-scan/tarball/master \
-    | tar --extract --gzip --strip-components 1 --directory ${CISA_HOME}/domain-scan/
+    && wget --relative --output-document /tmp/domain-scan.tar.gz \
+        https://github.com/cisagov/domain-scan/tarball/${DOMAIN_SCAN_REF} \
+    && echo "${DOMAIN_SCAN_SHA256}  /tmp/domain-scan.tar.gz" | sha256sum --check - \
+    && tar --extract --gzip --file /tmp/domain-scan.tar.gz \
+        --strip-components 1 --directory ${CISA_HOME}/domain-scan/ \
+    && rm /tmp/domain-scan.tar.gz
 
 # Copy in the Python virtual environment created in compile-stage, symlink the
 # Python binary in the venv to the system-wide Python, and add the venv to the PATH.

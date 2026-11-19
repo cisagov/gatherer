@@ -31,13 +31,29 @@
     },
     {
       customType: "regex",
-      datasourceTemplate: "github-releases",
+      // The github-tags datasource supports digest lookups, so Renovate
+      // can update the commit SHA in the archive URL and the release tag
+      // in the trailing comment together.
+      datasourceTemplate: "github-tags",
       depNameTemplate: "cisagov/mongo-db-from-config",
       managerFilePatterns: ["/^src/Pipfile$/"],
       matchStrings: [
-        "cisagov/mongo-db-from-config/archive/(?<currentValue>\\S+).tar.gz",
+        'cisagov/mongo-db-from-config/archive/(?<currentDigest>[0-9a-f]{40})\\.tar\\.gz"}\\s*#\\s*(?<currentValue>v\\S+)',
       ],
       versioningTemplate: "semver-coerced", // handles the leading `v`
+    },
+    {
+      customType: "regex",
+      // Track the head of the upstream default branch; the recorded pin
+      // is the commit digest in the Dockerfile ARG. The accompanying
+      // DOMAIN_SCAN_SHA256 ARG must be updated by hand on each bump (see
+      // the comment in the Dockerfile).
+      currentValueTemplate: "master",
+      datasourceTemplate: "git-refs",
+      depNameTemplate: "cisagov/domain-scan",
+      managerFilePatterns: ["Dockerfile"],
+      matchStrings: ["ARG DOMAIN_SCAN_REF=(?<currentDigest>[0-9a-f]{40})"],
+      packageNameTemplate: "https://github.com/cisagov/domain-scan",
     },
   ],
   dependencyDashboard: true,

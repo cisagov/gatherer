@@ -7,7 +7,10 @@ name = "pypi"
 [packages]
 # Required by src/fed_hostnames.py
 docopt = "*"
-mongo_db_from_config = {file = "https://github.com/cisagov/mongo-db-from-config/archive/v1.2.1.tar.gz"}
+# The archive URL is pinned to the commit for the release tag named in the
+# trailing comment.  Renovate updates the commit and the tag comment together
+# (see .github/renovate.json5).  Rerun `pipenv lock` after changing this URL.
+mongo_db_from_config = {file = "https://github.com/cisagov/mongo-db-from-config/archive/8ef326ac833252315be9e5e8778c3cc66c198c71.tar.gz"}  # v1.2.1
 # Required by cisagov/domain-scan per the following pip requirements files:
 # https://github.com/cisagov/domain-scan/blob/13d7e7c12a546213247f7b7a13e3241f0a9dba3f/requirements.txt
 # https://github.com/cisagov/domain-scan/blob/13d7e7c12a546213247f7b7a13e3241f0a9dba3f/lambda/requirements-lambda.txt
