@@ -32,6 +32,13 @@ from mongo_db_from_config import db_from_config
 import pymongo.errors
 import yaml
 
+# A conservative hostname shape: a leading alphanumeric, then
+# alphanumerics, dots, hyphens, or underscores.  Hostnames come from
+# reverse DNS, so anything else (commas, quotes, whitespace, a leading
+# dash) is upstream garbage that would corrupt the CSV for downstream
+# consumers; those rows are dropped with a warning.
+VALID_HOSTNAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+
 # The ports that are most commonly used by public-facing web servers
 WebServerPorts = {80, 280, 443, 591, 593, 832, 8080, 8888, 4443, 8443, 9443, 10443}
 
@@ -152,6 +159,12 @@ def main():
     with open(args["--output-file"], "w", newline="") as file:
         writer = csv.writer(file)
         for host in fed_hosts:
+            if not VALID_HOSTNAME_RE.match(host["hostname"]):
+                logging.warning(
+                    f"Skipping malformed hostname {host['hostname']!r} "
+                    f"for owner {host['owner']}"
+                )
+                continue
             writer.writerow([host["hostname"], host["owner"]])
             logging.debug(f"Federal host {host}")
 
