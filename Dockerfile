@@ -87,7 +87,7 @@ RUN groupadd --system --gid ${CISA_GID} ${CISA_GROUP} \
 # renovate: datasource=deb depName=bash
 ENV BASH_VERSION=5.2.37-2+b10
 # renovate: datasource=deb depName=redis-tools
-ENV REDIS_TOOLS_VERSION=5:8.0.2-3+deb13u2
+ENV REDIS_TOOLS_VERSION=5:8.0.2-3+deb13u3
 # renovate: datasource=deb depName=wget
 ENV WGET_VERSION=1.25.0-2
 ENV DEPS="bash=${BASH_VERSION} \
