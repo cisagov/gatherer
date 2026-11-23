@@ -29,6 +29,8 @@ services:
       - redis-server
       - --requirepass
       - ${REDIS_PASSWORD:-gatherer-dev-only}
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD:-gatherer-dev-only}
     healthcheck:
       test:
         - CMD
