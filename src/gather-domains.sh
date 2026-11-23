@@ -3,6 +3,9 @@
 # Gather hostnames and do any necessary scrubbing of the data.
 ###
 
+# Do not publish gathering_complete after a failed prerequisite or output step.
+set -e
+
 HOME_DIR=/home/cisa
 OUTPUT_DIR=$HOME_DIR/shared/artifacts
 

@@ -40,6 +40,9 @@ echo "REDIS_PASSWORD=$(openssl rand -hex 16)" > .env
 
 ## Running ##
 
+If a hostname-extraction, download, gathering, or final output command fails,
+the run exits without publishing a new `gathering_complete` signal to Redis.
+
 ### Running with Docker ###
 
 To run the `cisagov/gatherer` image via Docker:
