@@ -66,11 +66,11 @@ docker run cisagov/gatherer:2.0.9
     ```
 
 1. Ensure that the host directory you bind mount to `/home/cisa/shared`
-   is writable by the unprivileged user (UID 421) that the container
+   is writable by the unprivileged user (UID 2048) that the container
    runs as:
 
     ```console
-    chown --recursive 421:421 <your_output_dir>
+    chown --recursive 2048:2048 <your_output_dir>
     ```
 
     Changing the service's
@@ -211,9 +211,9 @@ Hub for a list of all the supported tags.
 | ----------- | ------- |
 | /home/cisa/shared | Output |
 
-This container runs as an unprivileged user (UID/GID 421), so any host
+This container runs as an unprivileged user (UID/GID 2048), so any host
 directory bind mounted to `/home/cisa/shared` must be writable by UID
-421 (e.g. `chown --recursive 421:421 <your_output_dir>`).
+2048 (e.g. `chown --recursive 2048:2048 <your_output_dir>`).
 
 ## Ports ##
 
